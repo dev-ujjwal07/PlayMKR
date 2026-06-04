@@ -23,4 +23,6 @@ class AuthConstants
     
     public const INVALID_TOKEN = 'Invalid or expired token';
     public const PASSWORD_RESET_SUCCESS = 'Password reset successfully';
+
+
 }

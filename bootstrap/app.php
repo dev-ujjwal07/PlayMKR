@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Constants\AuthConstants;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -30,18 +31,32 @@ return Application::configure(basePath: dirname(__DIR__))
 
     });
 
-    $exceptions->render(function (\Exception $e) {
+ $exceptions->render(function (\Exception $e) {
 
-        return response()->json([
+    $statusCode = 500;
 
-            'status' => false,
+    if (
+        $e->getMessage() === 'User not found' ||
+        $e->getMessage() === AuthConstants::EMAIL_NOT_FOUND
+    ) {
+        $statusCode = 404;
+    }
 
-            'message' => 'Something Went Wrong',
+    if (
+        $e->getMessage() === 'Invalid credentials' ||
+        $e->getMessage() === AuthConstants::INVALID_TOKEN
+    ) {
+        $statusCode = 401;
+    }
 
-            'error' => $e->getMessage()
+    return response()->json([
 
-        ], 500);
+        'status' => false,
 
-    });
+        'message' => $e->getMessage()
+
+    ], $statusCode);
+
+});
 
 })->create();
