@@ -42,4 +42,32 @@ implements SponsorApplicationRepositoryInterface
     {
         return Sponsor::create($data);
     }
+
+
+    public function findSponsorByEmail(
+    string $email
+)
+{
+    return Sponsor::where(
+        'email',
+        $email
+    )->first();
+}
+
+
+public function findSponsorById(int $id)
+{
+    return Sponsor::find($id);
+}
+
+public function updateSponsorStatus(
+    int $id,
+    string $status
+)
+{
+    return Sponsor::where('id', $id)
+        ->update([
+            'status' => $status
+        ]);
+}
 }

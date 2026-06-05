@@ -14,4 +14,16 @@ public function updateApplicationStatus(
 );
 
 public function createSponsor(array $data);
+
+public function findSponsorByEmail(
+    string $email
+);
+
+
+public function findSponsorById(int $id);
+
+public function updateSponsorStatus(
+    int $id,
+    string $status
+);
 }

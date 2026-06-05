@@ -21,7 +21,22 @@ Route::post(
     [SponsorApplicationController::class, 'store']
 );
 
-Route::post(
-    '/approve-sponsor',
-    [SponsorController::class, 'approveSponsor']
-);
+Route::middleware('auth:api')->group(function () {
+
+    Route::post(
+        '/approve-sponsor',
+        [SponsorController::class, 'approveSponsor']
+    );
+
+        Route::post(
+        '/sponsor-status',
+        [SponsorController::class, 'sponsorStatus']
+    );
+
+
+    Route::post(
+        '/add-sponsor',
+        [SponsorController::class, 'addSponsor']
+    );
+
+});

@@ -11,11 +11,14 @@ class SponsorApprovalRequest extends FormRequest
         return true;
     }
 
-    public function rules(): array
-    {
-        return [
-            'id' => 'required|exists:sponsor_applications,id',
-            'status' => 'required|in:approved'
-        ];
-    }
+public function rules(): array
+{
+    return [
+
+        'id' => 'required|exists:sponsor_applications,id',
+
+        'status' => 'required|in:approved,rejected'
+
+    ];
+}
 }

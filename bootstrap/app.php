@@ -4,59 +4,107 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Constants\AuthConstants;
+use Illuminate\Auth\AuthenticationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-          web: __DIR__.'/../routes/web.php',
-    api: __DIR__.'/../routes/api.php',
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+
+        $middleware->redirectGuestsTo(
+            fn () => null
+        );
+
     })
-   ->withExceptions(function (Exceptions $exceptions) {
+    ->withExceptions(function (Exceptions $exceptions) {
 
-    $exceptions->render(function (\Illuminate\Validation\ValidationException $e) {
+        $exceptions->render(function (HttpException $e) {
 
-        return response()->json([
+            return response()->json([
 
-            'status' => false,
+                'status' => false,
 
-            'message' => 'Validation Error',
+                'message' => $e->getMessage()
 
-            'errors' => $e->errors()
+            ], $e->getStatusCode());
 
-        ], 422);
+        });
 
-    });
+        $exceptions->render(
+            function (
+                AuthenticationException $e
+            ) {
 
- $exceptions->render(function (\Exception $e) {
+                return response()->json([
 
-    $statusCode = 500;
+                    'status' => false,
 
-    if (
-        $e->getMessage() === 'User not found' ||
-        $e->getMessage() === AuthConstants::EMAIL_NOT_FOUND
-    ) {
-        $statusCode = 404;
-    }
+                    'message' => 'Unauthenticated.'
 
-    if (
-        $e->getMessage() === 'Invalid credentials' ||
-        $e->getMessage() === AuthConstants::INVALID_TOKEN
-    ) {
-        $statusCode = 401;
-    }
+                ], 401);
+            }
+        );
 
-    return response()->json([
+        $exceptions->render(function (\Illuminate\Validation\ValidationException $e) {
 
-        'status' => false,
+            return response()->json([
 
-        'message' => $e->getMessage()
+                'status' => false,
 
-    ], $statusCode);
+                'message' => 'Validation Error',
 
-});
+                'errors' => $e->errors()
 
-})->create();
+            ], 422);
+
+        });
+
+        $exceptions->render(
+            function (
+                \App\Exceptions\SponsorAlreadyApprovedException $e
+            ) {
+
+                return response()->json([
+
+                    'status' => false,
+
+                    'message' => $e->getMessage()
+
+                ], 422);
+            }
+        );
+
+        $exceptions->render(function (\Exception $e) {
+
+            $statusCode = 500;
+
+            if (
+                $e->getMessage() === 'User not found' ||
+                $e->getMessage() === AuthConstants::EMAIL_NOT_FOUND
+            ) {
+                $statusCode = 404;
+            }
+
+            if (
+                $e->getMessage() === 'Invalid credentials' ||
+                $e->getMessage() === AuthConstants::INVALID_TOKEN
+            ) {
+                $statusCode = 401;
+            }
+
+            return response()->json([
+
+                'status' => false,
+
+                'message' => $e->getMessage()
+
+            ], $statusCode);
+
+        });
+
+    })->create();

@@ -9,9 +9,18 @@ class Sponsor extends Model
     protected $fillable = [
         'name',
         'email',
+        'password',
         'contact_number',
         'website_url',
         'industry',
         'address'
     ];
+
+
+
+    protected $hidden = [
+
+    'password'
+
+];
 }

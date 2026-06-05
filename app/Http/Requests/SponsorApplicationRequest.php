@@ -17,7 +17,7 @@ class SponsorApplicationRequest extends FormRequest
 
             'name' => 'required|string|max:100',
 
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|unique:sponsor_applications,email',
 
             'contact_number' =>
                 'required|string|min:10|max:15',
