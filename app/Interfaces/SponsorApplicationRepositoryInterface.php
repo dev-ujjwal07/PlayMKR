@@ -26,4 +26,14 @@ public function updateSponsorStatus(
     int $id,
     string $status
 );
+
+public function createDirectSponsor(array $data);
+
+
+public function deleteSponsor(int $id);
+
+public function updateSponsor(
+    int $id,
+    array $data
+);
 }

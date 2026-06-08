@@ -39,4 +39,17 @@ Route::middleware('auth:api')->group(function () {
         [SponsorController::class, 'addSponsor']
     );
 
+
+        Route::post(
+        '/delete-sponsor',
+        [SponsorController::class, 'deleteSponsor']
+    );
+
+
+
+
+        Route::post(
+        '/update-sponsor',
+        [SponsorController::class, 'updateSponsor']
+    );
 });

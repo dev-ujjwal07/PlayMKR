@@ -70,4 +70,49 @@ public function updateSponsorStatus(
             'status' => $status
         ]);
 }
+
+
+public function createDirectSponsor(array $data)
+{
+    return Sponsor::create($data);
+}
+
+public function deleteSponsor(int $id)
+{
+    return Sponsor::where('id', $id)->delete();
+}
+
+
+
+public function updateSponsor(
+    int $id,
+    array $data
+)
+{
+    $sponsor = Sponsor::find($id);
+
+    $sponsor->update([
+
+        'name' => $data['name'],
+
+        'email' => $data['email'],
+
+        'contact_number' =>
+            $data['contact_number'],
+
+        'website_url' =>
+            $data['website_url'],
+
+        'industry' =>
+            $data['industry'],
+
+        'address' =>
+            $data['address'],
+
+        'status' =>
+            $data['status']
+    ]);
+
+    return $sponsor->fresh();
+}
 }
