@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\SponsorApplicationController;
 use App\Http\Controllers\Api\SponsorController;
+use App\Http\Controllers\Api\DealTypeController;
 
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -51,5 +52,11 @@ Route::middleware('auth:api')->group(function () {
         Route::post(
         '/update-sponsor',
         [SponsorController::class, 'updateSponsor']
+    );
+
+
+        Route::post(
+        '/deal-type',
+        [DealTypeController::class, 'store']
     );
 });

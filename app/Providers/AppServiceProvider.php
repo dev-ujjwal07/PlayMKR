@@ -35,10 +35,19 @@ class AppServiceProvider extends ServiceProvider
         SponsorApplicationRepositoryInterface::class,
         SponsorApplicationRepository::class
     );
+
+
+    $this->app->bind(
+    \App\Interfaces\DealTypeRepositoryInterface::class,
+    \App\Repositories\DealTypeRepository::class
+);
     }
 
     public function boot(): void
     {
         //
     }
+
+
+
 }
