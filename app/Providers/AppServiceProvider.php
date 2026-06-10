@@ -41,6 +41,12 @@ class AppServiceProvider extends ServiceProvider
     \App\Interfaces\DealTypeRepositoryInterface::class,
     \App\Repositories\DealTypeRepository::class
 );
+
+
+$this->app->bind(
+    \App\Interfaces\DealRepositoryInterface::class,
+    \App\Repositories\DealRepository::class
+);
     }
 
     public function boot(): void

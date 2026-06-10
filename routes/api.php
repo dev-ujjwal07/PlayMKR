@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\SponsorApplicationController;
 use App\Http\Controllers\Api\SponsorController;
 use App\Http\Controllers\Api\DealTypeController;
+use App\Http\Controllers\Api\DealController;
 
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -59,4 +60,15 @@ Route::middleware('auth:api')->group(function () {
         '/deal-type',
         [DealTypeController::class, 'store']
     );
+     Route::post(
+        '/deal',
+        [DealController::class, 'store']
+    );
+
+
+Route::put(
+    '/update-deal/{id}',
+    [DealController::class, 'updateDeal']
+);
+    
 });
