@@ -6,6 +6,9 @@ use App\Http\Controllers\Api\SponsorApplicationController;
 use App\Http\Controllers\Api\SponsorController;
 use App\Http\Controllers\Api\DealTypeController;
 use App\Http\Controllers\Api\DealController;
+use App\Http\Controllers\Api\DeliverTypeController;
+use App\Http\Controllers\Api\DeliverableController;
+
 
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -70,5 +73,18 @@ Route::put(
     '/update-deal/{id}',
     [DealController::class, 'updateDeal']
 );
+
+
+    Route::post(
+        '/deliver-type',
+        [DeliverTypeController::class, 'store']
+    );
+
+
+        Route::post(
+        '/deliverable',
+        [DeliverableController::class, 'store']
+    );
+
     
 });

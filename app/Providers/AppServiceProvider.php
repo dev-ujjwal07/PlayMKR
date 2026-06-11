@@ -10,7 +10,11 @@ use App\Repositories\SponsorApplicationRepository;
 
 use Illuminate\Support\ServiceProvider;
 
+use App\Repositories\DeliverTypeRepository;
+use App\Interfaces\DeliverTypeRepositoryInterface;
 
+use App\Repositories\DeliverableRepository;
+use App\Interfaces\DeliverableRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -46,6 +50,18 @@ class AppServiceProvider extends ServiceProvider
 $this->app->bind(
     \App\Interfaces\DealRepositoryInterface::class,
     \App\Repositories\DealRepository::class
+);
+
+
+$this->app->bind(
+    DeliverableRepositoryInterface::class,
+    DeliverableRepository::class
+);
+
+
+$this->app->bind(
+    DeliverTypeRepositoryInterface::class,
+    DeliverTypeRepository::class
 );
     }
 
