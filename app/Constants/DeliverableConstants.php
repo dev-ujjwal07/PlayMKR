@@ -15,4 +15,13 @@ class DeliverableConstants
 
     const SPONSOR_NOT_FOUND =
         'Sponsor not found';
+
+        const DELIVERABLE_NOT_FOUND =
+    'Deliverable not found';
+
+const DELIVERABLE_DELETED =
+    'Deliverable deleted successfully';
+
+    const DELIVERABLE_UPDATED =
+    'Deliverable updated successfully';
 }

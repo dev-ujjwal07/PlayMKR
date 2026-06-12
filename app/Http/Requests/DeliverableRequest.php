@@ -34,8 +34,7 @@ class DeliverableRequest extends FormRequest
             'quantity' =>
                 'required|integer|min:1',
 
-            'attachment' =>
-                'nullable|string',
+          
 
             'sponsor_id' =>
                 'required|exists:sponsors,id',

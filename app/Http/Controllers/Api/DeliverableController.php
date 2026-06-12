@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Services\DeliverableService;
 use App\Http\Requests\DeliverableRequest;
 use App\Constants\DeliverableConstants;
+use App\Http\Requests\DeleteDeliverableRequest;
+use App\Http\Requests\UpdateDeliverableRequest;
+
 
 class DeliverableController extends Controller
 {
@@ -39,4 +42,49 @@ class DeliverableController extends Controller
 
         ], 201);
     }
+
+
+    public function delete(
+    DeleteDeliverableRequest $request
+)
+{
+    $this->deliverableService
+        ->delete(
+            $request->id
+        );
+
+    return response()->json([
+
+        'status' => true,
+
+        'message' =>
+            DeliverableConstants
+                ::DELIVERABLE_DELETED
+
+    ], 200);
+}
+
+public function update(
+    UpdateDeliverableRequest $request
+)
+{
+    $deliverable =
+        $this->deliverableService
+            ->update(
+                $request->id,
+                $request->validated()
+            );
+
+    return response()->json([
+
+        'status' => true,
+
+        'message' =>
+            DeliverableConstants
+                ::DELIVERABLE_UPDATED,
+
+        'data' => $deliverable
+
+    ], 200);
+}
 }

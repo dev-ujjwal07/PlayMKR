@@ -13,7 +13,7 @@ protected $fillable = [
     'title',
     'description',
     'quantity',
-    'attachment',
+
     'sponsor_id',
     'assigned_to',
     'status',

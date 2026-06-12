@@ -16,6 +16,9 @@ use App\Interfaces\DeliverTypeRepositoryInterface;
 use App\Repositories\DeliverableRepository;
 use App\Interfaces\DeliverableRepositoryInterface;
 
+use App\Repositories\AttachmentRepository;
+use App\Interfaces\AttachmentRepositoryInterface;
+
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
@@ -62,6 +65,11 @@ $this->app->bind(
 $this->app->bind(
     DeliverTypeRepositoryInterface::class,
     DeliverTypeRepository::class
+);
+
+$this->app->bind(
+    AttachmentRepositoryInterface::class,
+    AttachmentRepository::class
 );
     }
 

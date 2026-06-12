@@ -27,5 +27,31 @@ implements DeliverableRepositoryInterface
         return Deliverable::create($data);
     }
 
+    public function findById(
+    int $id
+)
+{
+    return Deliverable::find($id);
+}
+
+public function delete(
+    int $id
+)
+{
+    return Deliverable::destroy($id);
+}
+
+public function update(
+    int $id,
+    array $data
+)
+{
+    $deliverable =
+        Deliverable::findOrFail($id);
+
+    $deliverable->update($data);
+
+    return $deliverable->fresh();
+}
 
 }

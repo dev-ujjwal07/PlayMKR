@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\DealTypeController;
 use App\Http\Controllers\Api\DealController;
 use App\Http\Controllers\Api\DeliverTypeController;
 use App\Http\Controllers\Api\DeliverableController;
+use App\Http\Controllers\Api\AttachmentController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -85,6 +86,25 @@ Route::put(
         '/deliverable',
         [DeliverableController::class, 'store']
     );
+
+    Route::post(
+    '/attachments',
+    [AttachmentController::class, 'store']
+);
+
+Route::delete(
+    '/deliverables/{id}',
+    [DeliverableController::class, 'delete']
+);
+
+
+Route::put(
+    '/deliverables/{id}',
+    [DeliverableController::class, 'update']
+);
+
+
+    
 
     
 });
