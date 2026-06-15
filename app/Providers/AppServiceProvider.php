@@ -19,6 +19,9 @@ use App\Interfaces\DeliverableRepositoryInterface;
 use App\Repositories\AttachmentRepository;
 use App\Interfaces\AttachmentRepositoryInterface;
 
+use App\Repositories\InvoiceRepository;
+use App\Interfaces\InvoiceRepositoryInterface;
+
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
@@ -70,6 +73,11 @@ $this->app->bind(
 $this->app->bind(
     AttachmentRepositoryInterface::class,
     AttachmentRepository::class
+);
+
+$this->app->bind(
+    InvoiceRepositoryInterface::class,
+    InvoiceRepository::class
 );
     }
 

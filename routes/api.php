@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\DealController;
 use App\Http\Controllers\Api\DeliverTypeController;
 use App\Http\Controllers\Api\DeliverableController;
 use App\Http\Controllers\Api\AttachmentController;
+use App\Http\Controllers\Api\InvoiceController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -103,7 +104,21 @@ Route::put(
     [DeliverableController::class, 'update']
 );
 
+Route::post(
+    '/invoices',
+    [InvoiceController::class, 'store']
+);
 
+
+Route::put(
+    '/invoices/{id}',
+    [InvoiceController::class, 'update']
+);
+
+Route::delete(
+    '/invoices/{id}',
+    [InvoiceController::class, 'destroy']
+);
     
 
     
