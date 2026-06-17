@@ -31,14 +31,10 @@ extends Controller
             'status' => true,
 
             'message' =>
-                'Sponsor application submitted successfully',
+            'Sponsor application submitted successfully',
 
             'data' => $application
 
         ], 201);
     }
-
-
-
-    
 }
