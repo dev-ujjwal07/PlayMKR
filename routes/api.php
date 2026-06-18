@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\DeliverableController;
 use App\Http\Controllers\Api\AttachmentController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\CampaignController;
+use App\Http\Controllers\Api\TeamController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -137,5 +138,21 @@ Route::delete(
     [CampaignController::class, 'delete']
 );
 
+
+Route::post(
+    '/teams',
+    [TeamController::class, 'store']
+);
+
+Route::put(
+    '/teams/{id}',
+    [TeamController::class, 'update']
+);
+
+
+Route::delete(
+    '/teams/{id}',
+    [TeamController::class, 'destroy']
+);
 
 });

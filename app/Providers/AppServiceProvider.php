@@ -25,6 +25,12 @@ use App\Interfaces\InvoiceRepositoryInterface;
 use App\Repositories\CampaignRepository;
 use App\Interfaces\CampaignRepositoryInterface;
 
+use App\Interfaces\TeamRepositoryInterface;
+use App\Repositories\TeamRepository;
+
+
+
+
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
@@ -87,6 +93,13 @@ $this->app->bind(
     CampaignRepositoryInterface::class,
     CampaignRepository::class
 );
+
+
+    $this->app->bind(
+        TeamRepositoryInterface::class,
+        TeamRepository::class
+    );
+
     }
 
     public function boot(): void
