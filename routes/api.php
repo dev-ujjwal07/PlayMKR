@@ -10,13 +10,15 @@ use App\Http\Controllers\Api\DeliverTypeController;
 use App\Http\Controllers\Api\DeliverableController;
 use App\Http\Controllers\Api\AttachmentController;
 use App\Http\Controllers\Api\InvoiceController;
+use App\Http\Controllers\Api\CampaignController;
+use App\Http\Controllers\Api\TeamController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post(
-    '/forgot-password', 
+    '/forgot-password',
     [AuthController::class, 'forgotPassword']
 );
 
@@ -35,7 +37,7 @@ Route::middleware('auth:api')->group(function () {
         [SponsorController::class, 'approveSponsor']
     );
 
-        Route::post(
+    Route::post(
         '/sponsor-status',
         [SponsorController::class, 'sponsorStatus']
     );
@@ -47,7 +49,7 @@ Route::middleware('auth:api')->group(function () {
     );
 
 
-        Route::post(
+    Route::post(
         '/delete-sponsor',
         [SponsorController::class, 'deleteSponsor']
     );
@@ -55,26 +57,26 @@ Route::middleware('auth:api')->group(function () {
 
 
 
-        Route::post(
+    Route::post(
         '/update-sponsor',
         [SponsorController::class, 'updateSponsor']
     );
 
 
-        Route::post(
+    Route::post(
         '/deal-type',
         [DealTypeController::class, 'store']
     );
-     Route::post(
+    Route::post(
         '/deal',
         [DealController::class, 'store']
     );
 
 
-Route::put(
-    '/update-deal/{id}',
-    [DealController::class, 'updateDeal']
-);
+    Route::put(
+        '/update-deal/{id}',
+        [DealController::class, 'updateDeal']
+    );
 
 
     Route::post(
@@ -83,43 +85,74 @@ Route::put(
     );
 
 
-        Route::post(
+    Route::post(
         '/deliverable',
         [DeliverableController::class, 'store']
     );
 
     Route::post(
-    '/attachments',
-    [AttachmentController::class, 'store']
-);
+        '/attachments',
+        [AttachmentController::class, 'store']
+    );
 
-Route::delete(
-    '/deliverables/{id}',
-    [DeliverableController::class, 'delete']
-);
+    Route::delete(
+        '/deliverables/{id}',
+        [DeliverableController::class, 'delete']
+    );
 
 
-Route::put(
-    '/deliverables/{id}',
-    [DeliverableController::class, 'update']
-);
+    Route::put(
+        '/deliverables/{id}',
+        [DeliverableController::class, 'update']
+    );
+
+    Route::post(
+        '/invoices',
+        [InvoiceController::class, 'store']
+    );
+
+
+    Route::put(
+        '/invoices/{id}',
+        [InvoiceController::class, 'update']
+    );
+
+    Route::delete(
+        '/invoices/{id}',
+        [InvoiceController::class, 'destroy']
+    );
+
+    Route::post(
+        '/campaigns',
+        [CampaignController::class, 'store']
+    );
 
 Route::post(
-    '/invoices',
-    [InvoiceController::class, 'store']
+    '/campaigns/{dealId}/update',
+    [CampaignController::class, 'update']
 );
 
-
-Route::put(
-    '/invoices/{id}',
-    [InvoiceController::class, 'update']
-);
 
 Route::delete(
-    '/invoices/{id}',
-    [InvoiceController::class, 'destroy']
+    '/campaigns/{dealId}',
+    [CampaignController::class, 'delete']
 );
-    
 
-    
+
+Route::post(
+    '/teams',
+    [TeamController::class, 'store']
+);
+
+Route::put(
+    '/teams/{id}',
+    [TeamController::class, 'update']
+);
+
+
+Route::delete(
+    '/teams/{id}',
+    [TeamController::class, 'destroy']
+);
+
 });
