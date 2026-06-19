@@ -21,7 +21,9 @@ protected $fillable = [
     'title',
     'description',
     'quantity',
-
+         'name',
+    'team_id',
+    'attachment',
     'sponsor_id',
     'assigned_to',
     'status',

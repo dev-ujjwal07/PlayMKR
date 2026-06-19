@@ -34,6 +34,16 @@ class DeliverableRequest extends FormRequest
             'quantity' =>
                 'required|integer|min:1',
 
+
+
+                'name' =>
+    'required|string|max:255',
+
+'team_id' =>
+    'required|exists:teams,id',
+
+'attachment' =>
+    'required|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10240',
           
 
             'sponsor_id' =>
@@ -61,6 +71,11 @@ class DeliverableRequest extends FormRequest
 
             'due_date' =>
                 'required|date|after_or_equal:start_date'
+
+
+                
         ];
+
+        
     }
 }

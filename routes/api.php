@@ -101,10 +101,11 @@ Route::middleware('auth:api')->group(function () {
     );
 
 
-    Route::put(
+    Route::post(
         '/deliverables/{id}',
         [DeliverableController::class, 'update']
     );
+    
 
     Route::post(
         '/invoices',

@@ -26,10 +26,17 @@ class DeliverableController extends Controller
         DeliverableRequest $request
     )
     {
-        $deliverable = $this->deliverableService
-            ->create(
-                $request->validated()
-            );
+        $data =
+    $request->validated();
+
+$data['attachment'] =
+    $request->file(
+        'attachment'
+    );
+
+$deliverable =
+    $this->deliverableService
+        ->create($data);
 
         return response()->json([
 
@@ -68,12 +75,19 @@ public function update(
     UpdateDeliverableRequest $request
 )
 {
-    $deliverable =
-        $this->deliverableService
-            ->update(
-                $request->id,
-                $request->validated()
-            );
+   $data =
+    $request->validated();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+              
+    $request->file(
+        'attachment'
+    );
+
+$deliverable =
+    $this->deliverableService
+        ->update(
+            $request->id,
+            $data
+        );
 
     return response()->json([
 
@@ -86,5 +100,7 @@ public function update(
         'data' => $deliverable
 
     ], 200);
+
+    
 }
 }

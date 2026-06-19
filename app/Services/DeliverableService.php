@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use App\Interfaces\DeliverableRepositoryInterface;
 use Exception;
 use App\Constants\DeliverableConstants;
-
+use Illuminate\Support\Facades\Storage;
 
 class DeliverableService
 {
@@ -20,12 +20,15 @@ class DeliverableService
             $deliverableRepository;
     }
 
-   public function create(array $data)
+public function create(
+    array $data
+)
 {
-    $assignedSponsor = $this->deliverableRepository
-        ->findSponsorByName(
-            $data['assigned_to']
-        );
+    $assignedSponsor =
+        $this->deliverableRepository
+            ->findSponsorByName(
+                $data['assigned_to']
+            );
 
     if (!$assignedSponsor) {
 
@@ -34,11 +37,35 @@ class DeliverableService
         );
     }
 
+    $team =
+        $this->deliverableRepository
+            ->findTeamById(
+                $data['team_id']
+            );
+
+    if (!$team) {
+
+        throw new Exception(
+            'Team not found'
+        );
+    }
+
     $data['assigned_to'] =
         $assignedSponsor->id;
 
     $data['status_updated_at'] =
         Carbon::now();
+
+    if (
+        isset($data['attachment'])
+    ) {
+
+        $data['attachment'] =
+            $data['attachment']->store(
+                'deliverables',
+                'public'
+            );
+    }
 
     return $this->deliverableRepository
         ->create($data);
@@ -78,8 +105,8 @@ public function update(
     if (!$deliverable) {
 
         throw new Exception(
-                  DeliverableConstants
-                 ::DELIVERABLE_NOT_FOUND
+            DeliverableConstants
+                ::DELIVERABLE_NOT_FOUND
         );
     }
 
@@ -103,6 +130,45 @@ public function update(
 
         $data['assigned_to'] =
             $assignedSponsor->id;
+    }
+
+    if (
+        isset($data['team_id'])
+    ) {
+
+        $team =
+            $this->deliverableRepository
+                ->findTeamById(
+                    $data['team_id']
+                );
+
+        if (!$team) {
+
+            throw new Exception(
+                'Team not found'
+            );
+        }
+    }
+
+    if (
+        isset($data['attachment'])
+    ) {
+
+        if (
+            $deliverable->attachment
+        ) {
+
+            Storage::disk('public')
+                ->delete(
+                    $deliverable->attachment
+                );
+        }
+
+        $data['attachment'] =
+            $data['attachment']->store(
+                'deliverables',
+                'public'
+            );
     }
 
     if (

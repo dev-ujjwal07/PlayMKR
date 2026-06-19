@@ -22,4 +22,8 @@ public function update(
     int $id,
     array $data
 );
+
+public function findTeamById(
+    int $id
+);
 }

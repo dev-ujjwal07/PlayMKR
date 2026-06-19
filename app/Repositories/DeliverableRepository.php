@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Deliverable;
 use App\Interfaces\DeliverableRepositoryInterface;
 use App\Models\Sponsor;
+use App\Models\Team;
 
 class DeliverableRepository
 implements DeliverableRepositoryInterface
@@ -52,6 +53,13 @@ public function update(
     $deliverable->update($data);
 
     return $deliverable->fresh();
+}
+
+public function findTeamById(
+    int $id
+)
+{
+    return Team::find($id);
 }
 
 }
