@@ -19,6 +19,10 @@ public function findSponsorByEmail(
     string $email
 );
 
+public function createUser(
+    array $data
+);
+
 
 public function findSponsorById(int $id);
 

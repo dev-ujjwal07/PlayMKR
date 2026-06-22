@@ -32,4 +32,28 @@ public function delete(
     int $id
 );
 
+public function createUser(
+    array $data
+);
+
+
+public function findUserByEmail(
+    string $email
+);
+
+public function updateUser(
+    string $oldEmail,
+    array $data
+);
+
+public function deleteUserByEmail(
+    string $email
+);
+
+public function updateUserPassword(
+    string $email,
+    string $password
+);
+
+
 }

@@ -30,7 +30,7 @@ Route::post(
     [SponsorApplicationController::class, 'store']
 );
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware([ 'auth:api','admin'])->group(function () {
 
     Route::post(
         '/approve-sponsor',

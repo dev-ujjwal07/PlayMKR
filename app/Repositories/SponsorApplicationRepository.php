@@ -5,6 +5,8 @@ namespace App\Repositories;
 use App\Models\SponsorApplication;
 use App\Interfaces\SponsorApplicationRepositoryInterface;
 use App\Models\Sponsor;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class SponsorApplicationRepository
 implements SponsorApplicationRepositoryInterface
@@ -21,6 +23,32 @@ implements SponsorApplicationRepositoryInterface
             'status' => 'pending'
         ]);
     }
+
+public function createUser(
+    array $data
+)
+{
+    return User::create([
+
+        'name' =>
+            $data['name'],
+
+        'full_name' =>
+            $data['name'],
+
+        'email' =>
+            $data['email'],
+
+        'password' =>
+            Hash::make(
+                $data['password']
+            ),
+
+        'role_id' =>
+            2
+    ]);
+}
+
 
     public function findApplicationById(int $id)
     {
@@ -81,6 +109,7 @@ public function deleteSponsor(int $id)
 {
     return Sponsor::where('id', $id)->delete();
 }
+
 
 
 

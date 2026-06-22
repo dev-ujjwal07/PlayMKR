@@ -30,8 +30,8 @@ use HasApiTokens;
     'name',
     'full_name',
     'email',
-    'password'
-
+    'password',
+    'role_id'
 ];
 
     /**
@@ -42,6 +42,7 @@ use HasApiTokens;
     protected $hidden = [
         'password',
         'remember_token',
+    
     ];
 
     /**
