@@ -8,6 +8,8 @@ use App\Services\TeamService;
 use App\Constants\TeamConstants;
 use App\Http\Requests\CreateTeamRequest;
 use App\Http\Requests\UpdateTeamRequest;
+use Illuminate\Http\Request;
+
 class TeamController extends Controller
 {
     protected $teamService;
@@ -152,5 +154,46 @@ public function destroy(
 
         ], $statusCode);
     }
+}
+
+
+
+public function index(
+    Request $request
+)
+{
+    $teams =
+        $this->teamService
+            ->getTeams([
+
+                'search' =>
+                    $request->search,
+
+                'per_page' =>
+                    $request->per_page
+            ]);
+
+    return response()->json([
+
+        'status' => true,
+
+        'message' =>
+            'Teams fetched successfully',
+
+        'data' =>
+            $teams['data'],
+
+        'current_page' =>
+            $teams['current_page'],
+
+        'last_page' =>
+            $teams['last_page'],
+
+        'per_page' =>
+            $teams['per_page'],
+
+        'total' =>
+            $teams['total']
+    ]);
 }
 }

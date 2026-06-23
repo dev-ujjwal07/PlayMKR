@@ -62,4 +62,71 @@ public function findTeamById(
     return Team::find($id);
 }
 
+
+
+public function getDeliverables(
+    array $filters
+)
+{
+    $query = Deliverable::query()
+        ->with([
+            'deal:id,deal_title',
+            'deliverType:id,name',
+            'team:id,name'
+        ]);
+
+    if (
+        !empty($filters['search'])
+    ) {
+
+        $search =
+            $filters['search'];
+
+        $query->where(
+            function ($q) use ($search) {
+
+                $q->whereHas(
+                    'deal',
+                    function ($deal) use ($search) {
+
+                        $deal->where(
+                            'deal_title',
+                            'like',
+                            "%{$search}%"
+                        );
+                    }
+                )
+
+                ->orWhereHas(
+                    'team',
+                    function ($team) use ($search) {
+
+                        $team->where(
+                            'name',
+                            'like',
+                            "%{$search}%"
+                        );
+                    }
+                );
+            }
+        );
+    }
+
+    if (
+        !empty($filters['status'])
+    ) {
+
+        $query->where(
+            'status',
+            $filters['status']
+        );
+    }
+
+    return $query
+        ->latest('id')
+        ->paginate(
+            $filters['per_page'] ?? 10
+        );
+}
+
 }

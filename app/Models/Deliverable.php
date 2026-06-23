@@ -4,9 +4,38 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Attachment;
+use App\Models\Deal;
+use App\Models\DeliverType;
+use App\Models\Team;
 
 class Deliverable extends Model
 {
+
+public function deal()
+{
+    return $this->belongsTo(
+        Deal::class
+    );
+}
+
+public function deliverType()
+{
+    return $this->belongsTo(
+        DeliverType::class
+    );
+}
+
+public function team()
+{
+    return $this->belongsTo(
+        Team::class
+    );
+}
+
+
+
+
+
     public function attachments()
 {
     return $this->hasMany(

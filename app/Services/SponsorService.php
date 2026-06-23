@@ -265,4 +265,16 @@ public function updateSponsor(
         );
 }
 
+
+
+public function getSponsors(
+    array $filters
+)
+{
+    return $this->sponsorRepository
+        ->getSponsors(
+            $filters
+        );
+}
+
 }

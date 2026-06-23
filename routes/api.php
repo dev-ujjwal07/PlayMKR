@@ -62,6 +62,9 @@ Route::middleware([ 'auth:api','admin'])->group(function () {
         [SponsorController::class, 'updateSponsor']
     );
 
+    Route::get('/sponsors',[SponsorController::class, 'index']
+);
+
 
     Route::post(
         '/deal-type',
@@ -77,6 +80,11 @@ Route::middleware([ 'auth:api','admin'])->group(function () {
         '/update-deal/{id}',
         [DealController::class, 'updateDeal']
     );
+
+    Route::get(
+    '/deals',
+    [DealController::class, 'index']
+);
 
 
     Route::post(
@@ -138,6 +146,10 @@ Route::delete(
     '/campaigns/{dealId}',
     [CampaignController::class, 'delete']
 );
+Route::get(
+    '/deliverables',
+    [DeliverableController::class, 'index']
+);
 
 
 Route::post(
@@ -154,6 +166,12 @@ Route::put(
 Route::delete(
     '/teams/{id}',
     [TeamController::class, 'destroy']
+);
+
+
+Route::get(
+    '/teams',
+    [TeamController::class, 'index']
 );
 
 });

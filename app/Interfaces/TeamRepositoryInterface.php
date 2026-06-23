@@ -56,4 +56,8 @@ public function updateUserPassword(
 );
 
 
+public function getTeams(
+    array $filters
+);
+
 }

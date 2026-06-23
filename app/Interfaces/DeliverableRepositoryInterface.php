@@ -26,4 +26,7 @@ public function update(
 public function findTeamById(
     int $id
 );
+public function getDeliverables(
+    array $filters
+);
 }

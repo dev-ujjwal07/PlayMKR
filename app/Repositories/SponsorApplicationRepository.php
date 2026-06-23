@@ -8,6 +8,7 @@ use App\Models\Sponsor;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
+
 class SponsorApplicationRepository
 implements SponsorApplicationRepositoryInterface
 {
@@ -143,5 +144,58 @@ public function updateSponsor(
     ]);
 
     return $sponsor->fresh();
+}
+
+public function getSponsors(
+    array $filters
+)
+{
+    $query = Sponsor::query();
+
+    if (
+        !empty($filters['search'])
+    ) {
+
+        $search =
+            $filters['search'];
+
+        $query->where(
+            function ($q) use ($search) {
+
+                $q->where(
+                    'name',
+                    'like',
+                    "%{$search}%"
+                )
+                ->orWhere(
+                    'email',
+                    'like',
+                    "%{$search}%"
+                )
+                ->orWhere(
+                    'contact_number',
+                    'like',
+                    "%{$search}%"
+                );
+            }
+        );
+    }
+
+    if (
+        !empty($filters['status'])
+    ) {
+
+        $query->where(
+            'status',
+            $filters['status']
+        );
+    }
+
+    $perPage =
+        $filters['per_page'] ?? 10;
+
+    return $query
+        ->latest('id')
+        ->paginate($perPage);
 }
 }

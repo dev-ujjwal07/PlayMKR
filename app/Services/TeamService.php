@@ -255,4 +255,69 @@ $this->teamRepository
     return $this->teamRepository
         ->delete($id);
 }
+
+
+
+
+
+public function getTeams(
+    array $filters
+)
+{
+    $teams =
+        $this->teamRepository
+            ->getTeams(
+                $filters
+            );
+
+    $formattedData =
+        collect(
+            $teams->items()
+        )->map(
+            function ($team) {
+
+                return [
+
+                    'id' =>
+                        $team->id,
+
+                    'team_id' =>
+                        $team->team_id,
+
+                    'deliverable_name' =>
+                        $team->deliverable?->name,
+
+                    'name' =>
+                        $team->name,
+
+                    'email' =>
+                        $team->email,
+
+                    'created_at' =>
+                        $team->created_at,
+
+                    'updated_at' =>
+                        $team->updated_at
+                ];
+            }
+        );
+
+    return [
+
+        'data' =>
+            $formattedData,
+
+        'current_page' =>
+            $teams->currentPage(),
+
+        'last_page' =>
+            $teams->lastPage(),
+
+        'per_page' =>
+            $teams->perPage(),
+
+        'total' =>
+            $teams->total()
+    ];
+}
 }

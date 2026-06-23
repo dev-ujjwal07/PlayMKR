@@ -40,4 +40,8 @@ public function updateSponsor(
     int $id,
     array $data
 );
+
+public function getSponsors(
+    array $filters
+);
 }

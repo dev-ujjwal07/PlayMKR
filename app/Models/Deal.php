@@ -30,6 +30,21 @@ public function invoices()
     );
 }
 
+
+public function sponsor()
+{
+    return $this->belongsTo(
+        Sponsor::class
+    );
+}
+
+public function dealType()
+{
+    return $this->belongsTo(
+        DealType::class
+    );
+}
+
     protected $fillable = [
 
         'sponsor_id',

@@ -186,4 +186,15 @@ public function update(
         );
 }
 
+
+public function getDeliverables(
+    array $filters
+)
+{
+    return $this->deliverableRepository
+        ->getDeliverables(
+            $filters
+        );
+}
+
 }

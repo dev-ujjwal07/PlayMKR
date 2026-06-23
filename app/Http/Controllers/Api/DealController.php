@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DealRequest;
 use App\Services\DealService;
@@ -83,6 +83,83 @@ public function updateDeal(
         'data' => $deal
 
     ], 200);
+}
+
+
+
+public function index(
+    Request $request
+)
+{
+    $deals =
+        $this->dealService
+            ->getDeals([
+
+                'search' =>
+                    $request->search,
+
+                'status' =>
+                    $request->status,
+
+                'per_page' =>
+                    $request->per_page
+            ]);
+
+    $formattedDeals =
+        collect(
+            $deals->items()
+        )->map(
+            function ($deal) {
+
+                return [
+
+                    'id' =>
+                        $deal->id,
+
+                    'sponsor_name' =>
+                        $deal->sponsor?->name,
+
+                    'deal_type_name' =>
+                        $deal->dealType?->name,
+
+                    'title' =>
+                        $deal->title,
+
+                    'status' =>
+                        $deal->status,
+
+                    'created_at' =>
+                        $deal->created_at,
+
+                    'updated_at' =>
+                        $deal->updated_at
+                ];
+            }
+        );
+
+    return response()->json([
+
+        'status' => true,
+
+        'message' =>
+            'Deals fetched successfully',
+
+        'data' =>
+            $formattedDeals,
+
+        'current_page' =>
+            $deals->currentPage(),
+
+        'last_page' =>
+            $deals->lastPage(),
+
+        'per_page' =>
+            $deals->perPage(),
+
+        'total' =>
+            $deals->total()
+
+    ]);
 }
 
 

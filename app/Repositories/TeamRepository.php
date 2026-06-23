@@ -164,4 +164,48 @@ public function updateUserPassword(
 
 
 
+
+
+public function getTeams(
+    array $filters
+)
+{
+    $query = Team::query()
+        ->with([
+            'deliverable:id,name'
+        ]);
+
+    if (
+        !empty($filters['search'])
+    ) {
+
+        $search =
+            $filters['search'];
+
+        $query->where(
+            function ($q) use ($search) {
+
+                $q->where(
+                    'name',
+                    'like',
+                    "%{$search}%"
+                )
+
+                ->orWhere(
+                    'email',
+                    'like',
+                    "%{$search}%"
+                );
+            }
+        );
+    }
+
+    return $query
+        ->latest('id')
+        ->paginate(
+            $filters['per_page'] ?? 10
+        );
+}
+
+
 }
