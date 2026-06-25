@@ -9,6 +9,7 @@ use App\Http\Requests\SponsorStatusRequest;
 use App\Http\Requests\AddSponsorRequest;
 use App\Http\Requests\DeleteSponsorRequest;
 use App\Http\Requests\UpdateSponsorRequest;
+use Illuminate\Http\Request;
 
 
 class SponsorController extends Controller
@@ -124,6 +125,53 @@ public function updateSponsor(
             'Sponsor updated successfully',
 
         'data' => $sponsor
+
+    ], 200);
+}
+
+
+
+
+
+public function index(
+    Request $request
+)
+{
+    $sponsors =
+        $this->sponsorService
+            ->getSponsors([
+
+                'search' =>
+                    $request->search,
+
+                'status' =>
+                    $request->status,
+
+                'per_page' =>
+                    $request->per_page
+            ]);
+
+    return response()->json([
+
+        'status' => true,
+
+        'message' =>
+            'Sponsors fetched successfully',
+
+        'data' =>
+            $sponsors->items(),
+
+        'current_page' =>
+            $sponsors->currentPage(),
+
+        'last_page' =>
+            $sponsors->lastPage(),
+
+        'per_page' =>
+            $sponsors->perPage(),
+
+        'total' =>
+            $sponsors->total()
 
     ], 200);
 }

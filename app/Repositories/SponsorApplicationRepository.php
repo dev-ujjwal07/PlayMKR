@@ -5,6 +5,10 @@ namespace App\Repositories;
 use App\Models\SponsorApplication;
 use App\Interfaces\SponsorApplicationRepositoryInterface;
 use App\Models\Sponsor;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
+
 
 class SponsorApplicationRepository
 implements SponsorApplicationRepositoryInterface
@@ -21,6 +25,32 @@ implements SponsorApplicationRepositoryInterface
             'status' => 'pending'
         ]);
     }
+
+public function createUser(
+    array $data
+)
+{
+    return User::create([
+
+        'name' =>
+            $data['name'],
+
+        'full_name' =>
+            $data['name'],
+
+        'email' =>
+            $data['email'],
+
+        'password' =>
+            Hash::make(
+                $data['password']
+            ),
+
+        'role_id' =>
+            2
+    ]);
+}
+
 
     public function findApplicationById(int $id)
     {
@@ -84,6 +114,18 @@ public function deleteSponsor(int $id)
 
 
 
+public function findUserByEmail(
+    string $email
+)
+{
+    return User::where(
+        'email',
+        $email
+    )->first();
+}
+
+
+
 public function updateSponsor(
     int $id,
     array $data
@@ -114,5 +156,62 @@ public function updateSponsor(
     ]);
 
     return $sponsor->fresh();
+}
+
+public function getSponsors(
+    array $filters
+)
+{
+    $query = Sponsor::query();
+
+    if (
+        !empty($filters['search'])
+    ) {
+
+        $search =
+            $filters['search'];
+
+        $query->where(
+            function ($q) use ($search) {
+
+                $q->where(
+                    'name',
+                    'like',
+                    "%{$search}%"
+                )
+                ->orWhere(
+                    'email',
+                    'like',
+                    "%{$search}%"
+                )
+                ->orWhere(
+                    'contact_number',
+                    'like',
+                    "%{$search}%"
+                );
+            }
+        );
+    }
+
+    if (
+        !empty($filters['status'])
+    ) {
+
+        $query->where(
+            'status',
+            $filters['status']
+        );
+    }
+
+    $perPage =
+        $filters['per_page'] ?? 10;
+
+    return $query
+        ->latest('id')
+        ->paginate($perPage);
+
+        
+
+
 }
 }

@@ -54,22 +54,67 @@ class SponsorService
             $application->email
         );
 
-   if ($existingSponsor) {
+    if ($existingSponsor) {
 
-    throw new SponsorAlreadyApprovedException(
-        'Sponsor already approved'
-    );
-}
+        throw new SponsorAlreadyApprovedException(
+            'Sponsor already approved'
+        );
+    }
 
-    return $this->sponsorRepository
-        ->createSponsor([
-            'name' => $application->name,
-            'email' => $application->email,
-            'contact_number' => $application->contact_number,
-            'website_url' => $application->website_url,
-            'industry' => $application->industry,
-            'address' => $application->address,
+    $plainPassword =
+        Str::random(10);
+
+    $sponsor =
+        $this->sponsorRepository
+            ->createSponsor([
+
+                'name' =>
+                    $application->name,
+
+                'email' =>
+                    $application->email,
+
+                'password' =>
+                    Hash::make(
+                        $plainPassword
+                    ),
+
+                'contact_number' =>
+                    $application->contact_number,
+
+                'website_url' =>
+                    $application->website_url,
+
+                'industry' =>
+                    $application->industry,
+
+                'address' =>
+                    $application->address,
+            ]);
+
+    $this->sponsorRepository
+        ->createUser([
+
+            'name' =>
+                $sponsor->name,
+
+            'email' =>
+                $sponsor->email,
+
+            'password' =>
+                $plainPassword
         ]);
+
+    Mail::to(
+        $sponsor->email
+    )->send(
+        new SponsorCredentialsMail(
+            $sponsor->email,
+            $plainPassword
+        )
+    );
+
+    return $sponsor;
 }
         return $application;
     }
@@ -147,6 +192,35 @@ public function addSponsor(array $data)
                 $data['status']
         ]);
 
+
+        $user =
+    $this->sponsorRepository
+        ->findUserByEmail(
+            $sponsor->email
+        );
+
+if (!$user) {
+
+    $this->sponsorRepository
+        ->createUser([
+
+            'name' =>
+                $sponsor->name,
+
+            'email' =>
+                $sponsor->email,
+
+            'password' =>
+                $plainPassword
+        ]);
+}
+
+
+
+
+
+
+
     Mail::to($sponsor->email)
         ->send(
             new SponsorCredentialsMail(
@@ -200,6 +274,18 @@ public function updateSponsor(
         ->updateSponsor(
             $data['id'],
             $data
+        );
+}
+
+
+
+public function getSponsors(
+    array $filters
+)
+{
+    return $this->sponsorRepository
+        ->getSponsors(
+            $filters
         );
 }
 

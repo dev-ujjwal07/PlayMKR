@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Constants\TeamConstants;
 use App\Interfaces\TeamRepositoryInterface;
 use App\Mail\TeamCredentialsMail;
+use App\Models\User;
 
 class TeamService
 {
@@ -93,6 +94,22 @@ class TeamService
                 )
             ]);
 
+
+$this->teamRepository
+    ->createUser([
+
+        'name' =>
+            $team->name,
+
+        'email' =>
+            $team->email,
+
+        'password' =>
+            $plainPassword
+    ]); 
+
+
+
         Mail::to(
             $team->email
         )->send(
@@ -113,107 +130,194 @@ class TeamService
 
 
 
-    public function update(
-        int $id,
-        array $data
-    ) {
-        $team =
-            $this->teamRepository
+ public function update(
+    int $id,
+    array $data
+)
+{
+    $team =
+        $this->teamRepository
             ->findById($id);
 
-        if (!$team) {
+    if (!$team) {
 
-            throw new Exception(
-                TeamConstants::TEAM_NOT_FOUND
-            );
-        }
+        throw new Exception(
+            TeamConstants::TEAM_NOT_FOUND
+        );
+    }
 
-        $deliverable =
-            $this->teamRepository
+    $deliverable =
+        $this->teamRepository
             ->findDeliverableById(
                 $data['deliverable_id']
             );
 
-        if (!$deliverable) {
+    if (!$deliverable) {
 
-            throw new Exception(
-                TeamConstants::DELIVERABLE_NOT_FOUND
-            );
-        }
+        throw new Exception(
+            TeamConstants::DELIVERABLE_NOT_FOUND
+        );
+    }
 
-        $oldEmail =
-            $team->email;
+    $oldEmail = $team->email;
 
-        $updatedTeam =
-            $this->teamRepository
+    $updatedTeam =
+        $this->teamRepository
             ->update(
                 $id,
                 [
 
                     'deliverable_id' =>
-                    $data['deliverable_id'],
+                        $data['deliverable_id'],
 
                     'name' =>
-                    $data['name'],
+                        $data['name'],
 
                     'email' =>
-                    $data['email']
+                        $data['email']
                 ]
             );
 
-        if (
-            $oldEmail !==
-            $data['email']
-        ) {
+    $this->teamRepository
+        ->updateUser(
+            $oldEmail,
+            [
 
-            $newPassword =
-                \Illuminate\Support\Str::random(
-                    8
-                );
+                'name' =>
+                    $data['name'],
 
-            $updatedTeam =
-                $this->teamRepository
+                'email' =>
+                    $data['email']
+            ]
+        );
+
+    if (
+        $oldEmail !==
+        $data['email']
+    ) {
+
+        $newPassword =
+            Str::random(8);
+
+        $updatedTeam =
+            $this->teamRepository
                 ->update(
                     $id,
                     [
-
                         'password' =>
-                        \Illuminate\Support\Facades\Hash::make(
-                            $newPassword
-                        )
+                            Hash::make(
+                                $newPassword
+                            )
                     ]
                 );
 
-            \Illuminate\Support\Facades\Mail::to(
-                $updatedTeam->email
-            )->send(
-                new \App\Mail\TeamCredentialsMail(
-                    $updatedTeam->name,
-                    $updatedTeam->email,
-                    $newPassword
-                )
+        $this->teamRepository
+            ->updateUserPassword(
+                $data['email'],
+                $newPassword
             );
-        }
 
-        return $updatedTeam;
+        Mail::to(
+            $updatedTeam->email
+        )->send(
+            new TeamCredentialsMail(
+                $updatedTeam->name,
+                $updatedTeam->email,
+                $newPassword
+            )
+        );
     }
 
+    return $updatedTeam;
+}
 
-    public function delete(
-        int $id
-    ) {
-        $team =
-            $this->teamRepository
+
+  public function delete(
+    int $id
+)
+{
+    $team =
+        $this->teamRepository
             ->findById($id);
 
-        if (!$team) {
+    if (!$team) {
 
-            throw new Exception(
-                TeamConstants::TEAM_NOT_FOUND
-            );
-        }
-
-        return $this->teamRepository
-            ->delete($id);
+        throw new Exception(
+            TeamConstants::TEAM_NOT_FOUND
+        );
     }
+
+    $this->teamRepository
+        ->deleteUserByEmail(
+            $team->email
+        );
+
+    return $this->teamRepository
+        ->delete($id);
+}
+
+
+
+
+
+public function getTeams(
+    array $filters
+)
+{
+    $teams =
+        $this->teamRepository
+            ->getTeams(
+                $filters
+            );
+
+    $formattedData =
+        collect(
+            $teams->items()
+        )->map(
+            function ($team) {
+
+                return [
+
+                    'id' =>
+                        $team->id,
+
+                    'team_id' =>
+                        $team->team_id,
+
+                    'deliverable_name' =>
+                        $team->deliverable?->name,
+
+                    'name' =>
+                        $team->name,
+
+                    'email' =>
+                        $team->email,
+
+                    'created_at' =>
+                        $team->created_at,
+
+                    'updated_at' =>
+                        $team->updated_at
+                ];
+            }
+        );
+
+    return [
+
+        'data' =>
+            $formattedData,
+
+        'current_page' =>
+            $teams->currentPage(),
+
+        'last_page' =>
+            $teams->lastPage(),
+
+        'per_page' =>
+            $teams->perPage(),
+
+        'total' =>
+            $teams->total()
+    ];
+}
 }

@@ -123,4 +123,16 @@ public function updateDeal(array $data)
         );
 }
 
+
+
+public function getDeals(
+    array $filters
+)
+{
+    return $this->dealRepository
+        ->getDeals(
+            $filters
+        );
+}
+
 }

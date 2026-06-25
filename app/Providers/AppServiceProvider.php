@@ -28,7 +28,8 @@ use App\Interfaces\CampaignRepositoryInterface;
 use App\Interfaces\TeamRepositoryInterface;
 use App\Repositories\TeamRepository;
 
-
+use App\Repositories\TicketRepository;
+use App\Interfaces\TicketRepositoryInterface;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -99,6 +100,12 @@ $this->app->bind(
         TeamRepositoryInterface::class,
         TeamRepository::class
     );
+
+
+    $this->app->bind(
+    TicketRepositoryInterface::class,
+    TicketRepository::class
+);
 
     }
 

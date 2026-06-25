@@ -18,5 +18,9 @@ public function updateDeal(
     int $id,
     array $data
 );
+public function getDeals(
+    array $filters
+);
+
     //
 }

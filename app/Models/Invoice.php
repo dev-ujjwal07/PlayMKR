@@ -6,6 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class Invoice extends Model
 {
+
+public function deal()
+{
+    return $this->belongsTo(
+        Deal::class
+    );
+}
+
+public function sponsor()
+{
+    return $this->belongsTo(
+        Sponsor::class
+    );
+}
+
+
+
+
     protected $fillable = [
 
     'deal_id',

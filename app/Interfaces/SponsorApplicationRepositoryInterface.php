@@ -19,6 +19,10 @@ public function findSponsorByEmail(
     string $email
 );
 
+public function createUser(
+    array $data
+);
+
 
 public function findSponsorById(int $id);
 
@@ -36,4 +40,14 @@ public function updateSponsor(
     int $id,
     array $data
 );
+
+public function getSponsors(
+    array $filters
+);
+
+public function findUserByEmail(
+    string $email
+);
+
+
 }

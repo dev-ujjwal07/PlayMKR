@@ -89,4 +89,71 @@ public function destroy(
 
     ], 200);
 }
+
+
+public function index(
+    Request $request
+)
+{
+    $invoices =
+        $this->invoiceService
+            ->getInvoices([
+
+                'search' =>
+                    $request->search,
+
+                'payment_status' =>
+                    $request->payment_status,
+
+                'per_page' =>
+                    $request->per_page
+            ]);
+
+    return response()->json([
+
+        'status' => true,
+
+        'message' =>
+            'Invoices fetched successfully',
+
+        'data' =>
+            $invoices['data'],
+
+        'current_page' =>
+            $invoices['current_page'],
+
+        'last_page' =>
+            $invoices['last_page'],
+
+        'per_page' =>
+            $invoices['per_page'],
+
+        'total' =>
+            $invoices['total']
+    ]);
+}
+
+
+
+public function show(
+    int $id
+)
+{
+    $invoice =
+        $this->invoiceService
+            ->getInvoiceById(
+                $id
+            );
+
+    return response()->json([
+
+        'status' => true,
+
+        'message' =>
+            'Invoice fetched successfully',
+
+        'data' =>
+            $invoice
+    ]);
+}
 }

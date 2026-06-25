@@ -47,6 +47,16 @@ class UpdateDeliverableRequest
             'assigned_to' =>
                 'sometimes|string',
 
+
+'name' =>
+    'sometimes|string|max:255',
+
+'team_id' =>
+    'sometimes|exists:teams,id',
+
+'attachment' =>
+    'sometimes|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10240',
+
             'status' =>
                 'sometimes|in:pending,in_progress,completed',
 
@@ -61,6 +71,9 @@ class UpdateDeliverableRequest
 
             'due_date' =>
                 'sometimes|date|after_or_equal:start_date'
+
+
+                
         ];
     }
 }

@@ -22,4 +22,16 @@ public function update(
     int $id,
     array $data
 );
+
+public function findTeamById(
+    int $id
+);
+public function getDeliverables(
+    array $filters
+);
+
+public function getSponsorDeliverables(
+    int $sponsorId,
+    array $filters
+);
 }
