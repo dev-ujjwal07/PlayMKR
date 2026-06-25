@@ -44,4 +44,10 @@ public function updateSponsor(
 public function getSponsors(
     array $filters
 );
+
+public function findUserByEmail(
+    string $email
+);
+
+
 }

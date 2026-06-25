@@ -29,4 +29,9 @@ public function findTeamById(
 public function getDeliverables(
     array $filters
 );
+
+public function getSponsorDeliverables(
+    int $sponsorId,
+    array $filters
+);
 }

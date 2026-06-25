@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 
+
 class SponsorApplicationRepository
 implements SponsorApplicationRepositoryInterface
 {
@@ -113,6 +114,17 @@ public function deleteSponsor(int $id)
 
 
 
+public function findUserByEmail(
+    string $email
+)
+{
+    return User::where(
+        'email',
+        $email
+    )->first();
+}
+
+
 
 public function updateSponsor(
     int $id,
@@ -197,5 +209,9 @@ public function getSponsors(
     return $query
         ->latest('id')
         ->paginate($perPage);
+
+        
+
+
 }
 }

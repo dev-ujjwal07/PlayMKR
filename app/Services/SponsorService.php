@@ -192,18 +192,30 @@ public function addSponsor(array $data)
                 $data['status']
         ]);
 
-$this->sponsorRepository
-    ->createUser([
 
-        'name' =>
-            $sponsor->name,
+        $user =
+    $this->sponsorRepository
+        ->findUserByEmail(
+            $sponsor->email
+        );
 
-        'email' =>
-            $sponsor->email,
+if (!$user) {
 
-        'password' =>
-            $plainPassword
-    ]);
+    $this->sponsorRepository
+        ->createUser([
+
+            'name' =>
+                $sponsor->name,
+
+            'email' =>
+                $sponsor->email,
+
+            'password' =>
+                $plainPassword
+        ]);
+}
+
+
 
 
 

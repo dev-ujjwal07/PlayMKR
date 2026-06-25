@@ -129,4 +129,63 @@ public function getDeliverables(
         );
 }
 
+
+public function getSponsorDeliverables(
+    int $sponsorId,
+    array $filters
+)
+{
+    $query = Deliverable::query()
+        ->where(
+            'sponsor_id',
+            $sponsorId
+        );
+
+    if (
+        !empty($filters['search'])
+    ) {
+
+        $search =
+            $filters['search'];
+
+        $query->where(
+            function ($q) use ($search) {
+
+                $q->where(
+                    'title',
+                    'like',
+                    "%{$search}%"
+                )
+
+                ->orWhere(
+                    'status',
+                    'like',
+                    "%{$search}%"
+                )
+
+                ->orWhereHas(
+                    'deal',
+                    function ($dealQuery)
+                    use ($search) {
+
+                        $dealQuery->where(
+                            'deal_title',
+                            'like',
+                            "%{$search}%"
+                        );
+                    }
+                );
+            }
+        );
+    }
+
+    $perPage =
+        $filters['per_page']
+        ?? 10;
+
+    return $query
+        ->latest('id')
+        ->paginate($perPage);
+}
+
 }

@@ -6,6 +6,9 @@ use Illuminate\Foundation\Configuration\Middleware;
 use App\Constants\AuthConstants;
 use Illuminate\Auth\AuthenticationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use App\Exceptions\InvoiceNotFoundException;
+
+
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -86,24 +89,52 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         );
 
+
+$exceptions->render(
+    function (
+        InvoiceNotFoundException $e
+    ) {
+
+        return response()->json([
+
+            'status' => false,
+
+            'message' =>
+                $e->getMessage()
+
+        ], 404);
+    }
+);
+
+
+
+
+
+
+
         $exceptions->render(function (\Exception $e) {
 
             $statusCode = 500;
 
-            if (
-                $e->getMessage() === 'User not found' ||
-                $e->getMessage() === AuthConstants::EMAIL_NOT_FOUND
-            ) {
-                $statusCode = 404;
-            }
+              if (
+        $e instanceof InvoiceNotFoundException
+    ) {
+        $statusCode = 404;
+    }
 
-            if (
-                $e->getMessage() === 'Invalid credentials' ||
-                $e->getMessage() === AuthConstants::INVALID_TOKEN
-            ) {
-                $statusCode = 401;
-            }
+    if (
+        $e->getMessage() === 'User not found' ||
+        $e->getMessage() === AuthConstants::EMAIL_NOT_FOUND
+    ) {
+        $statusCode = 404;
+    }
 
+    if (
+        $e->getMessage() === 'Invalid credentials' ||
+        $e->getMessage() === AuthConstants::INVALID_TOKEN
+    ) {
+        $statusCode = 401;
+    }
             return response()->json([
 
                 'status' => false,
@@ -113,5 +144,10 @@ return Application::configure(basePath: dirname(__DIR__))
             ], $statusCode);
 
         });
+
+
+
+
+  
 
     })->create();

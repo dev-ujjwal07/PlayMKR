@@ -12,7 +12,7 @@ use App\Http\Controllers\Api\AttachmentController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\CampaignController;
 use App\Http\Controllers\Api\TeamController;
-
+use  App\Http\Controllers\Api\TicketController;
 
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -131,6 +131,19 @@ Route::middleware([ 'auth:api','admin'])->group(function () {
         [InvoiceController::class, 'destroy']
     );
 
+Route::get(
+    '/invoices',
+    [InvoiceController::class, 'index']
+);
+
+Route::get(
+    '/invoices/{id}',
+    [InvoiceController::class, 'show']
+);
+
+
+
+
     Route::post(
         '/campaigns',
         [CampaignController::class, 'store']
@@ -173,5 +186,48 @@ Route::get(
     '/teams',
     [TeamController::class, 'index']
 );
+
+Route::post(
+    '/tickets',
+    [TicketController::class, 'store']
+);
+
+
+Route::post(
+    '/tickets/update/{id}',
+    [TicketController::class, 'update']
+);
+
+Route::delete(
+    '/tickets/{id}',
+    [TicketController::class, 'delete']
+);
+
+Route::get(
+    '/tickets',
+    [TicketController::class, 'index']
+);
+
+Route::get(
+    '/tickets/{id}',
+    [TicketController::class, 'show']
+);
+
+});
+
+
+
+
+Route::middleware(
+    'auth:api'
+)->group(function () {
+
+    Route::get(
+        '/sponsor/deliverables',
+        [
+            DeliverableController::class,
+            'sponsorDeliverables'
+        ]
+    );
 
 });

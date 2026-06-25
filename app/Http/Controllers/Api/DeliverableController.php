@@ -201,4 +201,38 @@ public function index(
 
     ]);
 }
+
+
+
+
+
+public function sponsorDeliverables(
+    Request $request
+)
+{
+    $result =
+        $this->deliverableService
+        ->getSponsorDeliverables([
+
+            'search' =>
+                $request->search,
+
+            'per_page' =>
+                $request->per_page
+        ]);
+
+    return response()->json([
+
+        'status' => true,
+
+        'message' =>
+            'Deliverables fetched successfully',
+
+        'data' =>
+            $result['data'],
+
+        'pagination' =>
+            $result['pagination']
+    ]);
+}
 }

@@ -1,23 +1,29 @@
 <?php
-
 namespace App\Services;
 
 use Carbon\Carbon;
-use App\Interfaces\DeliverableRepositoryInterface;
 use Exception;
-use App\Constants\DeliverableConstants;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Constants\DeliverableConstants;
+use App\Interfaces\DeliverableRepositoryInterface;
+use App\Interfaces\SponsorApplicationRepositoryInterface;
 
 class DeliverableService
 {
     protected $deliverableRepository;
+    protected $sponsorRepository;
 
     public function __construct(
-        DeliverableRepositoryInterface $deliverableRepository
+        DeliverableRepositoryInterface $deliverableRepository,
+        SponsorApplicationRepositoryInterface $sponsorRepository
     )
     {
         $this->deliverableRepository =
             $deliverableRepository;
+
+        $this->sponsorRepository =
+            $sponsorRepository;
     }
 
 public function create(
@@ -195,6 +201,86 @@ public function getDeliverables(
         ->getDeliverables(
             $filters
         );
+}
+
+
+
+
+
+public function getSponsorDeliverables(
+    array $filters
+)
+{
+    
+   $user = request()->user();
+
+    $sponsor =
+        $this->sponsorRepository
+        ->findSponsorByEmail(
+            $user->email
+        );
+
+    if (!$sponsor) {
+
+        throw new Exception(
+            'Sponsor not found'
+        );
+    }
+
+    $deliverables =
+        $this->deliverableRepository
+        ->getSponsorDeliverables(
+            $sponsor->id,
+            $filters
+        );
+
+    $data =
+        collect(
+            $deliverables->items()
+        )->map(
+
+            function ($item) {
+
+                return [
+
+                    'id' =>
+                        $item->id,
+
+                    'deal_title' =>
+                        $item->deal?->deal_title,
+
+                    'title' =>
+                        $item->title,
+
+                    'due_date' =>
+                        $item->due_date,
+
+                    'status' =>
+                        $item->status
+                ];
+            }
+        );
+
+    return [
+
+        'data' =>
+            $data,
+
+        'pagination' => [
+
+            'current_page' =>
+                $deliverables->currentPage(),
+
+            'last_page' =>
+                $deliverables->lastPage(),
+
+            'per_page' =>
+                $deliverables->perPage(),
+
+            'total' =>
+                $deliverables->total()
+        ]
+    ];
 }
 
 }

@@ -14,7 +14,8 @@ class Deliverable extends Model
 public function deal()
 {
     return $this->belongsTo(
-        Deal::class
+        Deal::class,
+        'deal_id'
     );
 }
 
@@ -29,6 +30,18 @@ public function team()
 {
     return $this->belongsTo(
         Team::class
+    );
+}
+
+
+
+
+
+public function sponsor()
+{
+    return $this->belongsTo(
+        Sponsor::class,
+        'sponsor_id'
     );
 }
 

@@ -23,4 +23,13 @@ public function delete(
     int $id
 );
 
+
+public function getInvoices(
+    array $filters
+);
+
+public function findInvoiceById(
+    int $id
+);
+
 }
