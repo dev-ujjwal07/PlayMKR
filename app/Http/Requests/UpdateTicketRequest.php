@@ -44,6 +44,8 @@ extends FormRequest
             'start_date' =>
                 'sometimes|date',
 
+                'number_of_tickets' => 'sometimes|integer|min:1',
+
             'attachment' =>
                 'sometimes|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10240'
         ];

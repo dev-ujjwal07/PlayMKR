@@ -230,4 +230,14 @@ Route::middleware(
         ]
     );
 
+      Route::get(
+            '/sponsor/tickets',
+            [TicketController::class, 'sponsorTickets']
+        );
+
+        Route::patch(
+    '/sponsor/tickets/{id}/status',
+    [TicketController::class, 'updateSponsorTicketStatus']
+);
+
 });

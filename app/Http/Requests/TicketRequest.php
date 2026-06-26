@@ -30,6 +30,9 @@ class TicketRequest extends FormRequest
             'priority' =>
                 'required|in:high,medium,low',
 
+            
+                'number_of_tickets' => 'required|integer|min:1',
+
             'start_date' =>
                 'required|date',
 
