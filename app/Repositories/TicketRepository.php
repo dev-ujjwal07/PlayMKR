@@ -132,4 +132,108 @@ public function getTicketById(
 {
     return Ticket::find($id);
 }
+
+
+
+public function getSponsorTickets(
+    int $sponsorId,
+    array $filters
+)
+{
+    $query = Ticket::where(
+        'sponsor_id',
+        $sponsorId
+    );
+
+    if (!empty($filters['search'])) {
+
+        $search = $filters['search'];
+
+        $query->where(function ($q) use ($search) {
+
+            $q->where(
+                'ticket_id',
+                'like',
+                "%{$search}%"
+            )
+            ->orWhere(
+                'name',
+                'like',
+                "%{$search}%"
+            );
+        });
+    }
+
+    if (!empty($filters['status'])) {
+
+        $query->where(
+            'status',
+            $filters['status']
+        );
+    }
+
+    return $query
+        ->latest('id')
+        ->paginate(
+            $filters['per_page'] ?? 10
+        );
+}
+
+public function getSponsorTotalTickets(
+    int $sponsorId
+)
+{
+    return Ticket::where(
+        'sponsor_id',
+        $sponsorId
+    )->sum('number_of_tickets');
+}
+
+
+
+
+public function getTicketByIdAndSponsor(
+    int $ticketId,
+    int $sponsorId
+)
+{
+    return Ticket::where(
+
+        'id',
+        $ticketId
+
+    )->where(
+
+        'sponsor_id',
+        $sponsorId
+
+    )->first();
+}
+
+
+
+
+public function updateStatus(
+
+    int $id,
+
+    string $status
+
+)
+{
+    $ticket =
+
+        Ticket::findOrFail($id);
+
+    $ticket->status =
+
+        $status;
+
+    $ticket->save();
+
+    return $ticket->fresh();
+}
+
+
+
 }

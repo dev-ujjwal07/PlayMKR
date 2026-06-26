@@ -39,4 +39,25 @@ public function getTickets(
 public function getTicketById(
     int $id
 );
+
+public function getSponsorTickets(
+    int $sponsorId,
+    array $filters
+);
+
+public function getSponsorTotalTickets(
+    int $sponsorId
+);
+
+
+
+public function updateStatus(
+    int $id,
+    string $status
+);
+
+public function getTicketByIdAndSponsor(
+    int $ticketId,
+    int $sponsorId
+);
 }

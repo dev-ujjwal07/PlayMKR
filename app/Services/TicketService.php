@@ -6,19 +6,21 @@ use Exception;
 use App\Constants\TicketConstants;
 use App\Interfaces\TicketRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
-
+use App\Interfaces\SponsorApplicationRepositoryInterface;
 
 class TicketService
 {
-    protected $ticketRepository;
+  protected $ticketRepository;
+protected $sponsorRepository;
 
-    public function __construct(
-        TicketRepositoryInterface $ticketRepository
-    )
-    {
-        $this->ticketRepository =
-            $ticketRepository;
-    }
+public function __construct(
+    TicketRepositoryInterface $ticketRepository,
+    SponsorApplicationRepositoryInterface $sponsorRepository
+)
+{
+    $this->ticketRepository = $ticketRepository;
+    $this->sponsorRepository = $sponsorRepository;
+}
 
     public function create(
         array $data
@@ -86,8 +88,20 @@ class TicketService
                 $path;
         }
 
-        return $this->ticketRepository
-            ->create($data);
+        $ticket = $this->ticketRepository
+    ->create($data);
+
+$ticket->ticket_id =
+    '#TK' . str_pad(
+        $ticket->id,
+        3,
+        '0',
+        STR_PAD_LEFT
+    );
+
+$ticket->save();
+
+return $ticket;
     }
 
     public function update(
@@ -381,5 +395,155 @@ public function getTicketById(
         'created_at' =>
             $ticket->created_at
     ];
+}
+
+
+
+
+
+
+public function getSponsorTickets(
+    array $filters
+)
+{
+    $user = request()->user();
+
+    $sponsor = $this->sponsorRepository
+        ->findSponsorByEmail(
+            $user->email
+        );
+
+    if (!$sponsor) {
+
+        throw new Exception(
+            'Sponsor not found'
+        );
+    }
+
+    $tickets = $this->ticketRepository
+        ->getSponsorTickets(
+            $sponsor->id,
+            $filters
+        );
+
+    $data = collect(
+        $tickets->items()
+    )->map(function ($ticket) {
+
+        return [
+
+            'id' => $ticket->id,
+
+            'ticket_id' =>
+                $ticket->ticket_id,
+
+            'deal_id' =>
+                $ticket->deal_id,
+
+            'team_id' =>
+                $ticket->team_id,
+
+            'sponsor_id' =>
+                $ticket->sponsor_id,
+
+            'name' =>
+                $ticket->name,
+
+            'number_of_tickets' =>
+                $ticket->number_of_tickets,
+
+            'priority' =>
+                $ticket->priority,
+
+            'status' =>
+                $ticket->status,
+
+            'start_date' =>
+                $ticket->start_date,
+
+            'attachment' =>
+                $ticket->attachment
+                    ? asset(
+                        'storage/'.$ticket->attachment
+                    )
+                    : null,
+        ];
+
+    });
+
+    return [
+
+        'total_tickets' =>
+            $this->ticketRepository
+                ->getSponsorTotalTickets(
+                    $sponsor->id
+                ),
+
+        'data' =>
+            $data,
+
+        'pagination' => [
+
+            'current_page' =>
+                $tickets->currentPage(),
+
+            'last_page' =>
+                $tickets->lastPage(),
+
+            'per_page' =>
+                $tickets->perPage(),
+
+            'total' =>
+                $tickets->total(),
+        ]
+    ];
+}
+
+
+
+public function updateSponsorTicketStatus(
+    int $ticketId,
+    array $data
+)
+{
+    $user = request()->user();
+
+    if (!$user) {
+
+        throw new Exception(
+            'Unauthenticated.'
+        );
+    }
+
+    $sponsor = $this->sponsorRepository
+        ->findSponsorByEmail(
+            $user->email
+        );
+
+    if (!$sponsor) {
+
+        throw new Exception(
+            TicketConstants::SPONSOR_NOT_FOUND
+        );
+    }
+
+    $ticket = $this->ticketRepository
+        ->getTicketByIdAndSponsor(
+            $ticketId,
+            $sponsor->id
+        );
+
+    if (!$ticket) {
+
+        throw new Exception(
+            'You are not authorized to update this ticket'
+        );
+    }
+
+    return $this->ticketRepository
+        ->updateStatus(
+            $ticket->id,
+            $data['status']
+        );
 }
 }

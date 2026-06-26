@@ -9,6 +9,7 @@ use App\Constants\TicketConstants;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Http\Requests\DeleteTicketRequest;
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateSponsorTicketStatusRequest;
 
 class TicketController extends Controller
 {
@@ -143,6 +144,72 @@ public function show(
                     $id
                 )
     ]);
+}
+
+
+public function sponsorTickets(
+    Request $request
+)
+{
+    $result = $this->ticketService
+        ->getSponsorTickets(
+            $request->all()
+        );
+
+    return response()->json([
+
+        'status' => true,
+
+        'message' =>
+            'Sponsor tickets fetched successfully',
+
+        'total_tickets' =>
+            $result['total_tickets'],
+
+        'data' =>
+            $result['data'],
+
+        'pagination' =>
+            $result['pagination']
+
+    ]);
+}
+
+
+
+
+public function updateSponsorTicketStatus(
+    UpdateSponsorTicketStatusRequest $request,
+    int $id
+)
+{
+    $ticket =
+        $this->ticketService
+            ->updateSponsorTicketStatus(
+                $id,
+                $request->validated()
+            );
+
+    return response()->json([
+
+        'status' => true,
+
+        'message' =>
+            'Ticket status updated successfully',
+
+        'data' => [
+
+            'id' =>
+                $ticket->id,
+
+            'ticket_id' =>
+                $ticket->ticket_id,
+
+            'status' =>
+                $ticket->status
+        ]
+
+    ], 200);
 }
 
 
