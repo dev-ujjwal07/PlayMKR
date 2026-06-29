@@ -7,7 +7,14 @@ use App\Constants\AuthConstants;
 use Illuminate\Auth\AuthenticationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Exceptions\InvoiceNotFoundException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
+
+use App\Models\Report;
+use App\Models\Ticket;
+use App\Models\Deal;
+use App\Models\Sponsor;
+use App\Models\Deliverable;
 
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -88,6 +95,56 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 422);
             }
         );
+
+
+
+
+$exceptions->render(
+    function (
+        ModelNotFoundException $e
+    ) {
+
+        $model = class_basename(
+            $e->getModel()
+        );
+
+        $message = match ($model) {
+
+            'Report' =>
+                'Report not found',
+
+            'Ticket' =>
+                'Ticket not found',
+
+            'Deliverable' =>
+                'Deliverable not found',
+
+            'Sponsor' =>
+                'Sponsor not found',
+
+            'Deal' =>
+                'Deal not found',
+
+            default =>
+                'Record not found',
+        };
+
+        return response()->json([
+
+            'status' => false,
+
+            'message' => $message
+
+        ], 404);
+    }
+);
+
+
+
+
+
+
+
 
 
 $exceptions->render(

@@ -31,6 +31,9 @@ use App\Repositories\TeamRepository;
 use App\Repositories\TicketRepository;
 use App\Interfaces\TicketRepositoryInterface;
 
+use App\Interfaces\ReportRepositoryInterface;
+use App\Repositories\ReportRepository;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -106,6 +109,13 @@ $this->app->bind(
     TicketRepositoryInterface::class,
     TicketRepository::class
 );
+
+$this->app->bind(
+    ReportRepositoryInterface::class,
+    ReportRepository::class
+);
+
+
 
     }
 
