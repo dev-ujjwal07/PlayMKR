@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sponsor extends Model
 {
+public function reports()
+{
+    return $this->hasMany(
+        Report::class
+    );
+}
+
     protected $fillable = [
 
         'name',

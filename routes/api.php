@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\CampaignController;
 use App\Http\Controllers\Api\TeamController;
 use  App\Http\Controllers\Api\TicketController;
+use App\Http\Controllers\Api\ReportController;
 
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -213,6 +214,27 @@ Route::get(
     [TicketController::class, 'show']
 );
 
+// Admin Reports
+    Route::get(
+        '/reports',
+        [ReportController::class,'index']
+    );
+
+    Route::get(
+        '/reports/{id}',
+        [ReportController::class,'show']
+    );
+
+  Route::patch(
+    '/reports/status/{id}',
+    [ReportController::class,'updateStatus']
+);
+
+   Route::delete(
+    '/reports/{id}',
+    [ReportController::class,'delete']
+);
+
 });
 
 
@@ -239,5 +261,29 @@ Route::middleware(
     '/sponsor/tickets/{id}/status',
     [TicketController::class, 'updateSponsorTicketStatus']
 );
+    // Sponsor Reports
+
+   Route::post(
+        '/reports',
+        [ReportController::class, 'store']
+    );
+
+        Route::get(
+        '/sponsor/reports',
+        [ReportController::class,'sponsorIndex']
+    );
+
+    Route::get(
+        '/sponsor/reports/{id}',
+        [ReportController::class,'sponsorShow']
+    );
+
+   Route::delete(
+    '/sponsor/reports/{id}',
+    [ReportController::class,'sponsorDelete']
+);
+    
+
+
 
 });

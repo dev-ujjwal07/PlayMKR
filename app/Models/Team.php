@@ -13,6 +13,13 @@ public function deliverable()
     );
 }
 
+public function reports()
+{
+    return $this->hasMany(
+        Report::class
+    );
+}
+
 
     protected $fillable = [
 
