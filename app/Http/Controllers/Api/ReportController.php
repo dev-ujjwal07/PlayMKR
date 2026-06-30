@@ -187,4 +187,107 @@ public function delete(
             'Report deleted successfully'
     ]);
 }
+
+public function internalReports(
+    Request $request
+)
+{
+    $result =
+        $this->reportService
+            ->getInternalTeamReports(
+                $request->all()
+            );
+
+    return response()->json([
+
+        'status' => true,
+
+        'message' =>
+            'Internal Team Reports fetched successfully',
+
+        'data' =>
+            $result['data'],
+
+        'pagination' =>
+            $result['pagination']
+
+    ]);
+}
+
+public function internalReport(
+    int $id
+)
+{
+    return response()->json([
+
+        'status' => true,
+
+        'message' =>
+            'Internal Team Report fetched successfully',
+
+        'data' =>
+            $this->reportService
+                ->getInternalTeamReportById(
+                    $id
+                )
+
+    ]);
+}
+
+
+public function resolveInternalTeamReport(
+    int $id
+)
+{
+    $report =
+        $this->reportService
+            ->updateInternalTeamReportStatus(
+                $id
+            );
+
+    return response()->json([
+
+        'status' => true,
+
+        'message' =>
+            'Report resolved successfully',
+
+        'data' =>
+            $report
+
+    ]);
+}
+
+
+
+public function updateInternalTeamTicketReport(
+    Request $request,
+    int $id
+)
+{
+    $validated =
+        $request->validate([
+
+            'internal_team_description' =>
+                'required|string',
+
+            'attachment' =>
+                'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120'
+        ]);
+
+    $response =
+        $this->reportService
+            ->updateInternalTeamTicketReport(
+
+                $id,
+
+                $validated
+            );
+
+    return response()->json(
+        $response,
+        200
+    );
+}
+
 }

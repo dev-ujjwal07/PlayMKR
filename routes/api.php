@@ -287,3 +287,35 @@ Route::middleware(
 
 
 });
+
+
+
+
+
+Route::middleware([
+    'auth:api',
+    'internal_team'
+])->group(function () {
+
+    Route::get(
+        '/internal-team/reports',
+        [ReportController::class, 'internalReports']
+    );
+
+    Route::get(
+        '/internal-team/reports/{id}',
+        [ReportController::class, 'internalReport']
+    );
+
+
+    Route::patch(
+    '/internal-team/reports/{id}/resolved',
+    [ReportController::class, 'resolveInternalTeamReport']
+);
+
+Route::post(
+    '/internal-team/tickets/{id}/report',[ReportController::class,'updateInternalTeamTicketReport'
+    ]
+);
+
+});

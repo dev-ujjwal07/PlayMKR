@@ -7,6 +7,8 @@ use App\Constants\ReportConstants;
 use Illuminate\Support\Facades\Storage;
 use App\Interfaces\ReportRepositoryInterface;
 
+
+
 class ReportService
 {
     protected $reportRepository;
@@ -543,6 +545,319 @@ public function delete(
 
     return $this->reportRepository
         ->delete($id);
+}
+
+
+
+public function getInternalTeamReports(
+    array $filters
+)
+{
+    $user = request()->user();
+
+    $team =
+        $this->reportRepository
+            ->findTeamByEmail(
+                $user->email
+            );
+
+    if (!$team) {
+
+        throw new Exception(
+            'Team not found'
+        );
+    }
+
+    $reports =
+        $this->reportRepository
+            ->getInternalTeamReports(
+                $team->id,
+                $filters
+            );
+
+    $data =
+        collect(
+            $reports->items()
+        )->map(function ($report) {
+
+            return [
+
+                'report_id' =>
+                    $report->id,
+
+                'ticket_id' =>
+                    optional(
+                        $report->ticket
+                    )->ticket_id,
+
+                'sponsor_name' =>
+                    optional(
+                        optional(
+                            $report->ticket
+                        )->sponsor
+                    )->name,
+
+                'report_title' =>
+                    $report->title,
+
+                'report_description' =>
+                    $report->description,
+
+                'attachments' =>
+                    $report->attachment,
+
+                'status' =>
+                    $report->status,
+
+                'created_at' =>
+                    $report->created_at
+            ];
+        });
+
+    return [
+
+        'data' => $data,
+
+        'pagination' => [
+
+            'current_page' =>
+                $reports->currentPage(),
+
+            'last_page' =>
+                $reports->lastPage(),
+
+            'per_page' =>
+                $reports->perPage(),
+
+            'total' =>
+                $reports->total()
+        ]
+    ];
+}
+
+public function getInternalTeamReportById(
+    int $id
+)
+{
+  $user = request()->user();
+
+$team =
+    $this->reportRepository
+        ->findTeamByEmail(
+            $user->email
+        );
+
+if (!$team) {
+
+    throw new Exception(
+        'Team not found'
+    );
+}
+
+$report =
+    $this->reportRepository
+        ->getInternalTeamReportById(
+            $id,
+            $team->id
+        );
+
+
+    
+
+    if (!$report) {
+
+        throw new Exception(
+            ReportConstants::REPORT_NOT_FOUND
+        );
+    }
+
+    return [
+
+        'report_id' =>
+            $report->id,
+
+        'ticket_id' =>
+            optional(
+                $report->ticket
+            )->ticket_id,
+
+        'sponsor_name' =>
+            optional(
+                optional(
+                    $report->ticket
+                )->sponsor
+            )->name,
+
+        'report_title' =>
+            $report->title,
+
+        'report_description' =>
+            $report->description,
+
+        'attachments' =>
+            $report->attachment,
+
+        'status' =>
+            $report->status,
+
+        'created_at' =>
+            $report->created_at
+    ];
+}
+
+
+public function updateInternalTeamReportStatus(
+    int $id
+)
+{
+    $user = request()->user();
+
+$team =
+    $this->reportRepository
+        ->findTeamByEmail(
+            $user->email
+        );
+
+if (!$team) {
+
+    throw new Exception(
+        'Team not found'
+    );
+}
+
+$report =
+    $this->reportRepository
+        ->getInternalTeamReportById(
+            $id,
+            $team->id
+        );
+
+    if (!$report) {
+
+        throw new Exception(
+            'Unauthorized report'
+        );
+    }
+
+    if (
+        $report->status === 'resolved'
+    ) {
+
+        throw new Exception(
+            'Report already resolved'
+        );
+    }
+
+    return $this->reportRepository
+        ->updateInternalTeamReportStatus(
+
+          
+        $id,
+
+        $team->id,
+
+        [
+            'status' => 'resolved'
+        ]
+        );
+}
+
+
+
+public function updateInternalTeamTicketReport(
+    int $ticketId,
+    array $data
+)
+{
+    $user = request()->user();
+
+    $team =
+        $this->reportRepository
+            ->findTeamByEmail(
+                $user->email
+            );
+
+    if (!$team) {
+
+        throw new Exception(
+            'Team not found'
+        );
+    }
+
+    $ticket =
+        $this->reportRepository
+            ->findTicketByTeam(
+                $ticketId,
+                $team->id
+            );
+
+    if (!$ticket) {
+
+        throw new Exception(
+            'Unauthorized ticket'
+        );
+    }
+
+    if (
+        isset($data['attachment'])
+    ) {
+
+        if (
+            $ticket->attachment &&
+            Storage::disk('public')->exists(
+                $ticket->attachment
+            )
+        ) {
+
+            Storage::disk('public')->delete(
+                $ticket->attachment
+            );
+        }
+
+        $file =
+            $data['attachment'];
+
+        $fileName =
+            time() .
+            '_' .
+            $file->getClientOriginalName();
+
+        $data['attachment'] =
+            $file->storeAs(
+
+                'tickets',
+
+                $fileName,
+
+                'public'
+            );
+    }
+
+    $this->reportRepository
+        ->updateInternalTeamTicketReport(
+
+            $ticketId,
+
+            $team->id,
+
+            [
+
+                'internal_team_description' =>
+                    $data['internal_team_description'],
+
+                'attachment' =>
+                    $data['attachment']
+                        ?? $ticket->attachment
+            ]
+        );
+
+    return [
+
+        'status' => true,
+
+        'message' =>
+            'Internal team report created successfully.'
+    ];
 }
 
 }

@@ -10,6 +10,7 @@ use App\Constants\TeamConstants;
 use App\Interfaces\TeamRepositoryInterface;
 use App\Mail\TeamCredentialsMail;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class TeamService
 {
@@ -25,6 +26,8 @@ class TeamService
     public function create(
         array $data
     ) {
+ Log::info('Create method started');
+
         $deliverable =
             $this->teamRepository
             ->findDeliverableById(
@@ -107,6 +110,7 @@ $this->teamRepository
         'password' =>
             $plainPassword
     ]); 
+\Illuminate\Support\Facades\Log::info('Before Mail');
 
 
 
@@ -120,8 +124,25 @@ $this->teamRepository
             )
         );
 
+
+        \Illuminate\Support\Facades\Log::info('After Mail');
+
+ Log::info('After Mail');
+ 
         return $team;
+
+
+
     }
+
+
+
+
+
+
+
+
+
 
 
 
