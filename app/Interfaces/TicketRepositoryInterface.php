@@ -60,4 +60,14 @@ public function getTicketByIdAndSponsor(
     int $ticketId,
     int $sponsorId
 );
+
+public function getInternalTeamTickets(
+    int $teamId,
+    array $filters
+);
+
+public function getInternalTeamTicketById(
+    int $ticketId,
+    int $teamId
+);
 }

@@ -732,12 +732,12 @@ $report =
             $team->id
         );
 
-    if (!$report) {
+if (!$report) {
 
-        throw new Exception(
-            'Unauthorized report'
-        );
-    }
+    throw new Exception(
+        'Report not found.'
+    );
+}
 
     if (
         $report->status === 'resolved'
@@ -857,6 +857,386 @@ public function updateInternalTeamTicketReport(
 
         'message' =>
             'Internal team report created successfully.'
+    ];
+}
+
+
+
+public function getInternalTeamTickets(
+    array $filters
+)
+{
+    $user = request()->user();
+
+    $team =
+        $this->reportRepository
+            ->findTeamByEmail(
+                $user->email
+            );
+
+    if (!$team) {
+
+        throw new Exception(
+            'Team not found'
+        );
+    }
+
+    $tickets =
+        $this->reportRepository
+            ->getInternalTeamTickets(
+                $team->id,
+                $filters
+            );
+
+    $data =
+        collect(
+            $tickets->items()
+        )->map(function ($ticket) {
+
+            return [
+
+                'ticket_id' =>
+                    $ticket->ticket_id,
+
+                'ticket_name' =>
+                    $ticket->name,
+
+                'sponsor_name' =>
+                    optional(
+                        $ticket->sponsor
+                    )->name,
+
+                'priority' =>
+                    $ticket->priority,
+
+                'status' =>
+                    $ticket->status,
+
+                'attachment' =>
+                    $ticket->attachment,
+
+                'start_date' =>
+                    $ticket->start_date,
+
+                'report_status' =>
+                    optional(
+                        $ticket->reports
+                            ->sortByDesc('id')
+                            ->first()
+                    )->status,
+
+                'created_at' =>
+                    $ticket->created_at
+            ];
+        });
+
+return [
+
+    'data' =>
+        $data->values(),
+
+    'total_assigned_tickets' =>
+        $tickets->total(),
+
+    'pagination' => [
+
+        'current_page' =>
+            $tickets->currentPage(),
+
+        'last_page' =>
+            $tickets->lastPage(),
+
+        'per_page' =>
+            $tickets->perPage(),
+
+        'total' =>
+            $tickets->total()
+    ]
+];
+}
+
+
+public function getInternalTicketDetail(
+    int $id
+)
+{
+    $user =
+        request()->user();
+
+    $team =
+        $this->reportRepository
+            ->findTeamByEmail(
+                $user->email
+            );
+
+    if (!$team) {
+
+        throw new Exception(
+            'Team not found'
+        );
+    }
+
+    $ticket =
+        $this->reportRepository
+                ->getInternalTeamTicketById(
+                $id,
+                $team->id
+            );
+
+    if (!$ticket) {
+
+        throw new Exception(
+            'Ticket not found'
+        );
+    }
+
+   return [
+
+    'id' =>
+        $ticket->id,
+
+    'ticket_id' =>
+        $ticket->ticket_id,
+
+    'ticket_name' =>
+        $ticket->name,
+
+    'number_of_tickets' =>
+        $ticket->number_of_tickets,
+
+    'priority' =>
+        $ticket->priority,
+
+    'status' =>
+        $ticket->status,
+
+    'start_date' =>
+        $ticket->start_date,
+
+    'attachment' =>
+        $ticket->attachment,
+
+    'name' =>
+        optional(
+            $ticket->sponsor
+        )->name,
+
+    'deal_title' =>
+        optional(
+            $ticket->deal
+        )->deal_title,
+
+    'deal_status' =>
+        optional(
+            $ticket->deal
+        )->status,
+
+    'team_name' =>
+        optional(
+            $ticket->team
+        )->name,
+
+    'admin_name' =>
+        optional(
+            $ticket->admin
+        )->name,
+
+   'current_status' =>
+    $ticket->team_id
+        ? 'Assigned'
+        : 'Unassigned',
+
+    'sponsor_approval' =>
+        optional(
+            $ticket->sponsor
+        )->status,
+
+    'created_at' =>
+        $ticket->created_at
+];
+}
+
+
+
+public function getInternalTeamReportedTickets(
+    array $filters
+)
+{
+    $user =
+        request()->user();
+
+    $team =
+        $this->reportRepository
+            ->findTeamByEmail(
+                $user->email
+            );
+
+    if (!$team) {
+
+        throw new Exception(
+            'Team not found'
+        );
+    }
+
+    $tickets =
+        $this->reportRepository
+            ->getInternalTeamReportedTickets(
+                $team->id,
+                $filters
+            );
+
+    $data =
+        collect(
+            $tickets->items()
+        )->map(function ($ticket) {
+
+            return [
+
+                'ticket_id' =>
+                    $ticket->ticket_id,
+
+                'ticket_name' =>
+                    $ticket->name,
+
+                'sponsor_name' =>
+                    optional(
+                        $ticket->sponsor
+                    )->name,
+
+                'priority' =>
+                    $ticket->priority,
+
+                'status' =>
+                    $ticket->status,
+
+                'internal_team_description' =>
+                    $ticket->internal_team_description,
+
+                'attachment' =>
+                    $ticket->attachment,
+
+                'start_date' =>
+                    $ticket->start_date,
+
+                'created_at' =>
+                    $ticket->created_at
+            ];
+        });
+
+    return [
+
+        'data' =>
+            $data->values(),
+
+        'pagination' => [
+
+            'current_page' =>
+                $tickets->currentPage(),
+
+            'last_page' =>
+                $tickets->lastPage(),
+
+            'per_page' =>
+                $tickets->perPage(),
+
+            'total' =>
+                $tickets->total()
+        ]
+    ];
+}
+
+
+
+
+public function getInternalTeamReportedTicketById(
+    int $id
+)
+{
+    $user =
+        request()->user();
+
+    $team =
+        $this->reportRepository
+            ->findTeamByEmail(
+                $user->email
+            );
+
+    if (!$team) {
+
+        throw new Exception(
+            'Team not found'
+        );
+    }
+
+    $ticket =
+        $this->reportRepository
+            ->getInternalTeamReportedTicketById(
+                $id,
+                $team->id
+            );
+
+    if (!$ticket) {
+
+        throw new Exception(
+            'Reported ticket not found.'
+        );
+    }
+
+    return [
+
+        'id' =>
+            $ticket->id,
+
+        'ticket_id' =>
+            $ticket->ticket_id,
+
+        'ticket_name' =>
+            $ticket->name,
+
+        'number_of_tickets' =>
+            $ticket->number_of_tickets,
+
+        'priority' =>
+            $ticket->priority,
+
+        'status' =>
+            $ticket->status,
+
+        'internal_team_description' =>
+            $ticket->internal_team_description,
+
+        'attachment' =>
+            $ticket->attachment,
+
+        'start_date' =>
+            $ticket->start_date,
+
+        'sponsor_name' =>
+            optional(
+                $ticket->sponsor
+            )->name,
+
+      
+
+        'team_name' =>
+            optional(
+                $ticket->team
+            )->name,
+
+  
+
+        'current_status' =>
+            $ticket->team_id
+                ? 'Assigned'
+                : 'Unassigned',
+
+        'sponsor_approval' =>
+            optional(
+                $ticket->sponsor
+            )->status,
+
+        'created_at' =>
+            $ticket->created_at
     ];
 }
 

@@ -407,4 +407,214 @@ public function findTicketByTeam(
 }
 
 
+public function getInternalTeamTickets(
+    int $teamId,
+    array $filters
+)
+{
+    $query = Ticket::with([
+        'sponsor',
+        'reports'
+    ])
+    ->where(
+        'team_id',
+        $teamId
+    );
+
+    if (!empty($filters['search'])) {
+
+        $search = $filters['search'];
+
+        $query->where(function ($q) use ($search) {
+
+            $q->where(
+                'ticket_id',
+                'like',
+                "%{$search}%"
+            )
+
+            ->orWhere(
+                'priority',
+                'like',
+                "%{$search}%"
+            )
+
+            ->orWhere(
+                'status',
+                'like',
+                "%{$search}%"
+            )
+
+            ->orWhereHas(
+                'sponsor',
+                function ($sponsor) use ($search) {
+
+                    $sponsor->where(
+                        'name',
+                        'like',
+                        "%{$search}%"
+                    );
+                }
+            );
+        });
+    }
+
+    if (!empty($filters['status'])) {
+
+        $query->where(
+            'status',
+            $filters['status']
+        );
+    }
+
+    return $query
+        ->latest()
+        ->paginate(
+            $filters['per_page'] ?? 10
+        );
+}
+
+
+
+
+
+public function getInternalTeamTicketById(
+    int $ticketId,
+    int $teamId
+)
+{
+    return Ticket::with([
+        'deal',
+        'team',
+        'sponsor',
+        'admin'
+    ])
+    ->where('team_id', $teamId)
+    ->where('id', $ticketId)
+    ->first();
+}
+
+
+
+public function getInternalTeamReportedTickets(
+    int $teamId,
+    array $filters
+)
+{
+    $query =
+        Ticket::with([
+
+            'sponsor',
+
+            'reports'
+
+        ])
+        ->where(
+            'team_id',
+            $teamId
+        )
+        ->whereNotNull(
+            'internal_team_description'
+        )
+        ->where(
+            'internal_team_description',
+            '!=',
+            ''
+        );
+
+    if (
+        !empty($filters['search'])
+    ) {
+
+        $search =
+            $filters['search'];
+
+        $query->where(function ($q) use ($search) {
+
+            $q->where(
+                'ticket_id',
+                'like',
+                "%{$search}%"
+            )
+
+            ->orWhere(
+                'priority',
+                'like',
+                "%{$search}%"
+            )
+
+            ->orWhere(
+                'status',
+                'like',
+                "%{$search}%"
+            )
+
+            ->orWhereHas(
+                'sponsor',
+                function ($sponsor) use ($search) {
+
+                    $sponsor->where(
+                        'name',
+                        'like',
+                        "%{$search}%"
+                    );
+                }
+            );
+        });
+    }
+
+    if (
+        !empty($filters['status'])
+    ) {
+
+        $query->where(
+            'status',
+            $filters['status']
+        );
+    }
+
+    return $query
+        ->latest()
+        ->paginate(
+            $filters['per_page'] ?? 10
+        );
+}
+
+
+
+
+public function getInternalTeamReportedTicketById(
+    int $ticketId,
+    int $teamId
+)
+{
+    return Ticket::with([
+
+            'sponsor',
+
+            'deal',
+
+            'team'
+
+        ])
+        ->where(
+            'id',
+            $ticketId
+        )
+        ->where(
+            'team_id',
+            $teamId
+        )
+        ->whereNotNull(
+            'internal_team_description'
+        )
+        ->where(
+            'internal_team_description',
+            '!=',
+            ''
+        )
+        ->first();
+}
+
+
 }

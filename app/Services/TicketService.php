@@ -88,6 +88,12 @@ public function __construct(
                 $path;
         }
 
+$user = request()->user();
+
+$data['admin_id'] = $user->id;
+
+
+
         $ticket = $this->ticketRepository
     ->create($data);
 

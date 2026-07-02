@@ -31,7 +31,7 @@ Route::post(
     [SponsorApplicationController::class, 'store']
 );
 
-Route::middleware([ 'auth:api','admin'])->group(function () {
+Route::middleware(['auth:api', 'admin'])->group(function () {
 
     Route::post(
         '/approve-sponsor',
@@ -63,8 +63,10 @@ Route::middleware([ 'auth:api','admin'])->group(function () {
         [SponsorController::class, 'updateSponsor']
     );
 
-    Route::get('/sponsors',[SponsorController::class, 'index']
-);
+    Route::get(
+        '/sponsors',
+        [SponsorController::class, 'index']
+    );
 
 
     Route::post(
@@ -83,9 +85,9 @@ Route::middleware([ 'auth:api','admin'])->group(function () {
     );
 
     Route::get(
-    '/deals',
-    [DealController::class, 'index']
-);
+        '/deals',
+        [DealController::class, 'index']
+    );
 
 
     Route::post(
@@ -114,7 +116,7 @@ Route::middleware([ 'auth:api','admin'])->group(function () {
         '/deliverables/{id}',
         [DeliverableController::class, 'update']
     );
-    
+
 
     Route::post(
         '/invoices',
@@ -132,15 +134,15 @@ Route::middleware([ 'auth:api','admin'])->group(function () {
         [InvoiceController::class, 'destroy']
     );
 
-Route::get(
-    '/invoices',
-    [InvoiceController::class, 'index']
-);
+    Route::get(
+        '/invoices',
+        [InvoiceController::class, 'index']
+    );
 
-Route::get(
-    '/invoices/{id}',
-    [InvoiceController::class, 'show']
-);
+    Route::get(
+        '/invoices/{id}',
+        [InvoiceController::class, 'show']
+    );
 
 
 
@@ -150,91 +152,90 @@ Route::get(
         [CampaignController::class, 'store']
     );
 
-Route::post(
-    '/campaigns/{dealId}/update',
-    [CampaignController::class, 'update']
-);
+    Route::post(
+        '/campaigns/{dealId}/update',
+        [CampaignController::class, 'update']
+    );
 
 
-Route::delete(
-    '/campaigns/{dealId}',
-    [CampaignController::class, 'delete']
-);
-Route::get(
-    '/deliverables',
-    [DeliverableController::class, 'index']
-);
+    Route::delete(
+        '/campaigns/{dealId}',
+        [CampaignController::class, 'delete']
+    );
+    Route::get(
+        '/deliverables',
+        [DeliverableController::class, 'index']
+    );
 
 
-Route::post(
-    '/teams',
-    [TeamController::class, 'store']
-);
+    Route::post(
+        '/teams',
+        [TeamController::class, 'store']
+    );
 
-Route::put(
-    '/teams/{id}',
-    [TeamController::class, 'update']
-);
-
-
-Route::delete(
-    '/teams/{id}',
-    [TeamController::class, 'destroy']
-);
+    Route::put(
+        '/teams/{id}',
+        [TeamController::class, 'update']
+    );
 
 
-Route::get(
-    '/teams',
-    [TeamController::class, 'index']
-);
-
-Route::post(
-    '/tickets',
-    [TicketController::class, 'store']
-);
+    Route::delete(
+        '/teams/{id}',
+        [TeamController::class, 'destroy']
+    );
 
 
-Route::post(
-    '/tickets/update/{id}',
-    [TicketController::class, 'update']
-);
+    Route::get(
+        '/teams',
+        [TeamController::class, 'index']
+    );
 
-Route::delete(
-    '/tickets/{id}',
-    [TicketController::class, 'delete']
-);
+    Route::post(
+        '/tickets',
+        [TicketController::class, 'store']
+    );
 
-Route::get(
-    '/tickets',
-    [TicketController::class, 'index']
-);
 
-Route::get(
-    '/tickets/{id}',
-    [TicketController::class, 'show']
-);
+    Route::post(
+        '/tickets/update/{id}',
+        [TicketController::class, 'update']
+    );
 
-// Admin Reports
+    Route::delete(
+        '/tickets/{id}',
+        [TicketController::class, 'delete']
+    );
+
+    Route::get(
+        '/tickets',
+        [TicketController::class, 'index']
+    );
+
+    Route::get(
+        '/tickets/{id}',
+        [TicketController::class, 'show']
+    );
+
+    // Admin Reports
     Route::get(
         '/reports',
-        [ReportController::class,'index']
+        [ReportController::class, 'index']
     );
 
     Route::get(
         '/reports/{id}',
-        [ReportController::class,'show']
+        [ReportController::class, 'show']
     );
 
-  Route::patch(
-    '/reports/status/{id}',
-    [ReportController::class,'updateStatus']
-);
+    Route::patch(
+        '/reports/status/{id}',
+        [ReportController::class, 'updateStatus']
+    );
 
-   Route::delete(
-    '/reports/{id}',
-    [ReportController::class,'delete']
-);
-
+    Route::delete(
+        '/reports/{id}',
+        [ReportController::class, 'delete']
+    );
 });
 
 
@@ -252,40 +253,36 @@ Route::middleware(
         ]
     );
 
-      Route::get(
-            '/sponsor/tickets',
-            [TicketController::class, 'sponsorTickets']
-        );
+    Route::get(
+        '/sponsor/tickets',
+        [TicketController::class, 'sponsorTickets']
+    );
 
-        Route::patch(
-    '/sponsor/tickets/{id}/status',
-    [TicketController::class, 'updateSponsorTicketStatus']
-);
+    Route::patch(
+        '/sponsor/tickets/{id}/status',
+        [TicketController::class, 'updateSponsorTicketStatus']
+    );
     // Sponsor Reports
 
-   Route::post(
+    Route::post(
         '/reports',
         [ReportController::class, 'store']
     );
 
-        Route::get(
+    Route::get(
         '/sponsor/reports',
-        [ReportController::class,'sponsorIndex']
+        [ReportController::class, 'sponsorIndex']
     );
 
     Route::get(
         '/sponsor/reports/{id}',
-        [ReportController::class,'sponsorShow']
+        [ReportController::class, 'sponsorShow']
     );
 
-   Route::delete(
-    '/sponsor/reports/{id}',
-    [ReportController::class,'sponsorDelete']
-);
-    
-
-
-
+    Route::delete(
+        '/sponsor/reports/{id}',
+        [ReportController::class, 'sponsorDelete']
+    );
 });
 
 
@@ -309,13 +306,44 @@ Route::middleware([
 
 
     Route::patch(
-    '/internal-team/reports/{id}/resolved',
-    [ReportController::class, 'resolveInternalTeamReport']
-);
+        '/internal-team/reports/{id}/resolved',
+        [ReportController::class, 'resolveInternalTeamReport']
+    );
 
-Route::post(
-    '/internal-team/tickets/{id}/report',[ReportController::class,'updateInternalTeamTicketReport'
-    ]
-);
+    Route::post(
+        '/internal-team/tickets/{id}/report',
+        [
+            ReportController::class,
+            'updateInternalTeamTicketReport'
+        ]
+    );
 
+    Route::get(
+        '/internal-team/tickets',
+        [
+            ReportController::class,
+            'internalTeamTickets'
+        ]
+    );
+
+
+    Route::get(
+        '/internal-team/tickets/{id}',
+        [ReportController::class, 'internalTicketDetail']
+    );
+
+
+
+
+
+    Route::get(
+        '/internal-team/reported-tickets',
+        [ReportController::class, 'internalTeamReportedTickets']
+    );
+
+
+    Route::get(
+        '/internal-team/reported-tickets/{id}',
+        [ReportController::class, 'internalTeamReportedTicketById']
+    );
 });

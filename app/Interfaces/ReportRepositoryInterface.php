@@ -81,4 +81,26 @@ public function findTicketByTeam(
     int $ticketId,
     int $teamId
 );
+
+
+public function getInternalTeamTickets(
+    int $teamId,
+    array $filters
+);
+
+public function getInternalTeamTicketById(
+    int $ticketId,
+    int $teamId
+);
+
+
+public function getInternalTeamReportedTickets(
+    int $teamId,
+    array $filters
+);
+
+public function getInternalTeamReportedTicketById(
+    int $ticketId,
+    int $teamId
+);
 }
