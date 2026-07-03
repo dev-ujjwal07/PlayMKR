@@ -13,28 +13,25 @@ class AttachmentController extends Controller
 
     public function __construct(
         AttachmentService $attachmentService
-    )
-    {
+    ) {
         $this->attachmentService =
             $attachmentService;
     }
 
     public function store(
         AttachmentRequest $request
-    )
-    {
-        $attachments =
-            $this->attachmentService
-                ->upload(
-                    $request->validated()
-                );
+    ) {
+        $attachments = $this->attachmentService
+            ->upload(
+                $request->validated()
+            );
 
         return response()->json([
 
             'status' => true,
 
             'message' =>
-                AttachmentConstants::ATTACHMENT_UPLOADED,
+            AttachmentConstants::ATTACHMENT_UPLOADED,
 
             'data' => $attachments
 

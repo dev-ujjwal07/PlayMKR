@@ -208,4 +208,70 @@ public function getTeams(
 }
 
 
+
+
+public function getInternalTeamByEmail(
+    string $email
+)
+{
+    return Team::where(
+        'email',
+        $email
+    )->first();
+}
+
+
+public function updateInternalTeam(
+    int $teamId,
+    array $data
+)
+{
+    $team =
+        Team::find(
+            $teamId
+        );
+
+    if (!$team) {
+
+        return null;
+    }
+
+    $team->update(
+        $data
+    );
+
+    return $team->fresh();
+}
+
+
+
+public function updateUserById(
+    int $userId,
+    array $data
+)
+{
+    $user =
+        User::find(
+            $userId
+        );
+
+    if (!$user) {
+
+        return null;
+    }
+
+    $user->update(
+        $data
+    );
+
+    return $user->fresh();
+}
+
+
+public function getUserById(
+    int $id
+)
+{
+    return User::find($id);
+}
 }

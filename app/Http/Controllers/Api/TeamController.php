@@ -9,6 +9,7 @@ use App\Constants\TeamConstants;
 use App\Http\Requests\CreateTeamRequest;
 use App\Http\Requests\UpdateTeamRequest;
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateInternalTeamProfileRequest;
 
 class TeamController extends Controller
 {
@@ -195,5 +196,38 @@ public function index(
         'total' =>
             $teams['total']
     ]);
+}
+
+
+
+public function updateInternalTeamProfile(
+    UpdateInternalTeamProfileRequest $request
+)
+{
+    $response =
+        $this->teamService
+            ->updateInternalTeamProfile(
+                $request->validated()
+            );
+
+    return response()->json(
+
+        $response,
+
+        200
+    );
+}
+
+
+
+public function getInternalTeamProfile()
+{
+    $profile =
+        $this->teamService
+            ->getInternalTeamProfile();
+
+    return response()->json(
+        $profile
+    );
 }
 }

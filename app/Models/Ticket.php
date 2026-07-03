@@ -14,6 +14,7 @@ class Ticket extends Model
         'deal_id',
         'team_id',
         'sponsor_id',
+         'admin_id',
         'number_of_tickets',
         'internal_team_description',
         'name',
@@ -53,4 +54,14 @@ class Ticket extends Model
             'sponsor_id'
         );
     }
+
+    public function admin()
+{
+    return $this->belongsTo(
+        User::class,
+        'admin_id'
+    );
+}
+
+
 }

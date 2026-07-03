@@ -10,6 +10,7 @@ use App\Http\Requests\AddSponsorRequest;
 use App\Http\Requests\DeleteSponsorRequest;
 use App\Http\Requests\UpdateSponsorRequest;
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateSponsorProfileRequest;
 
 
 class SponsorController extends Controller
@@ -175,4 +176,35 @@ public function index(
 
     ], 200);
 }
+
+
+public function updateProfile(
+    UpdateSponsorProfileRequest $request
+)
+{
+    $response =
+
+        $this->sponsorService
+            ->updateProfile(
+
+                $request->validated()
+            );
+
+    return response()->json(
+
+        $response
+    );
+}
+
+
+public function getProfile()
+{
+    return response()->json(
+
+        $this->sponsorService
+            ->getProfile()
+
+    );
+}
+
 }

@@ -48,4 +48,64 @@ public function update(
     int $id,
     array $data
 );
+
+
+public function getInternalTeamReports(
+    int $teamId,
+    array $filters
+);
+
+public function getInternalTeamReportById(
+    int $id,
+    int $teamId
+);
+
+
+public function updateInternalTeamReportStatus(
+    int $id,
+    int $teamId,
+    array $data
+);
+
+public function findTeamByEmail(
+    string $email
+);
+
+public function updateInternalTeamTicketReport(
+    int $ticketId,
+    int $teamId,
+    array $data
+);
+
+public function findTicketByTeam(
+    int $ticketId,
+    int $teamId
+);
+
+
+public function getInternalTeamTickets(
+    int $teamId,
+    array $filters
+);
+
+public function getInternalTeamTicketById(
+    int $ticketId,
+    int $teamId
+);
+
+
+public function getInternalTeamReportedTickets(
+    int $teamId,
+    array $filters
+);
+
+public function getInternalTeamReportedTicketById(
+    int $ticketId,
+    int $teamId
+);
+
+
+
+
+
 }

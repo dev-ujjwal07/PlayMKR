@@ -17,36 +17,33 @@ class ReportController extends Controller
 
     public function __construct(
         ReportService $reportService
-    )
-    {
+    ) {
         $this->reportService =
             $reportService;
     }
 
     public function store(
         ReportRequest $request
-    )
-    {
+    ) {
         try {
 
             $report =
                 $this->reportService
-                    ->create(
-                        $request->validated()
-                    );
+                ->create(
+                    $request->validated()
+                );
 
             return response()->json([
 
                 'status' => true,
 
                 'message' =>
-                    ReportConstants::REPORT_CREATED,
+                ReportConstants::REPORT_CREATED,
 
                 'data' =>
-                    $report
+                $report
 
             ], 201);
-
         } catch (Exception $e) {
 
             return response()->json([
@@ -54,7 +51,7 @@ class ReportController extends Controller
                 'status' => false,
 
                 'message' =>
-                    $e->getMessage()
+                $e->getMessage()
 
             ], 400);
         }
@@ -63,128 +60,344 @@ class ReportController extends Controller
 
 
     public function sponsorIndex(
-    Request $request
-)
-{
-    return response()->json([
+        Request $request
+    ) {
+        return response()->json([
 
-        'status' => true,
+            'status' => true,
 
-        'message' =>
+            'message' =>
             'Reports fetched successfully',
 
-        'data' =>
+            'data' =>
             $this->reportService
                 ->getSponsorReports(
                     $request->all()
                 )
-    ]);
-}
+        ]);
+    }
 
 
-public function sponsorShow(
-    int $id
-)
-{
-    return response()->json([
+    public function sponsorShow(
+        int $id
+    ) {
+        return response()->json([
 
-        'status' => true,
+            'status' => true,
 
-        'message' =>
+            'message' =>
             'Report fetched successfully',
 
-        'data' =>
+            'data' =>
             $this->reportService
                 ->getSponsorReportById(
                     $id
                 )
-    ]);
-}
+        ]);
+    }
 
-public function index(
-    Request $request
-)
-{
-    return response()->json([
+    public function index(
+        Request $request
+    ) {
+        return response()->json([
 
-        'status' => true,
+            'status' => true,
 
-        'message' =>
+            'message' =>
             'Reports fetched successfully',
 
-        'data' =>
+            'data' =>
             $this->reportService
                 ->getReports(
                     $request->all()
                 )
-    ]);
-}
+        ]);
+    }
 
-public function show(
-    int $id
-)
-{
-    return response()->json([
+    public function show(
+        int $id
+    ) {
+        return response()->json([
 
-        'status' => true,
+            'status' => true,
 
-        'message' =>
+            'message' =>
             'Report fetched successfully',
 
-        'data' =>
+            'data' =>
             $this->reportService
                 ->getReportById(
                     $id
                 )
-    ]);
-}
+        ]);
+    }
 
-public function updateStatus(
-    int $id
-)
-{
-    return response()->json([
+    public function updateStatus(
+        int $id
+    ) {
+        return response()->json([
 
-        'status' => true,
+            'status' => true,
 
-        'message' =>
+            'message' =>
             'Report resolved successfully',
 
-        'data' =>
+            'data' =>
             $this->reportService
                 ->updateStatus($id)
-    ]);
-}
+        ]);
+    }
 
-public function sponsorDelete(
+    public function sponsorDelete(
+        int $id
+    ) {
+        $this->reportService
+            ->sponsorDelete($id);
+
+        return response()->json([
+
+            'status' => true,
+
+            'message' =>
+            'Report deleted successfully'
+        ]);
+    }
+
+    public function delete(
+        int $id
+    ) {
+        $this->reportService
+            ->delete($id);
+
+        return response()->json([
+
+            'status' => true,
+
+            'message' =>
+            'Report deleted successfully'
+        ]);
+    }
+
+    public function internalReports(
+        Request $request
+    ) {
+        $result =
+            $this->reportService
+            ->getInternalTeamReports(
+                $request->all()
+            );
+
+        return response()->json([
+
+            'status' => true,
+
+            'message' =>
+            'Internal Team Reports fetched successfully',
+
+            'data' =>
+            $result['data'],
+
+            'pagination' =>
+            $result['pagination']
+
+        ]);
+    }
+
+    public function internalReport(
+        int $id
+    ) {
+        return response()->json([
+
+            'status' => true,
+
+            'message' =>
+            'Internal Team Report fetched successfully',
+
+            'data' =>
+            $this->reportService
+                ->getInternalTeamReportById(
+                    $id
+                )
+
+        ]);
+    }
+
+
+    public function resolveInternalTeamReport(
+        int $id
+    ) {
+        $report =
+            $this->reportService
+            ->updateInternalTeamReportStatus(
+                $id
+            );
+
+        return response()->json([
+
+            'status' => true,
+
+            'message' =>
+            'Report resolved successfully',
+
+            'data' =>
+            $report
+
+        ]);
+    }
+
+
+
+    public function updateInternalTeamTicketReport(
+        Request $request,
+        int $id
+    ) {
+        $validated =
+            $request->validate([
+
+                'internal_team_description' =>
+                'required|string',
+
+                'attachment' =>
+                'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120'
+            ]);
+
+        $response =
+            $this->reportService
+            ->updateInternalTeamTicketReport(
+
+                $id,
+
+                $validated
+            );
+
+        return response()->json(
+            $response,
+            200
+        );
+    }
+
+
+    public function internalTeamTickets(
+        Request $request
+    ) {
+        $response =
+            $this->reportService
+            ->getInternalTeamTickets([
+
+                'search' =>
+                $request->search,
+
+                'status' =>
+                $request->status,
+
+                'per_page' =>
+                $request->per_page
+            ]);
+
+        return response()->json(
+
+            array_merge(
+
+                [
+
+                    'status' => true,
+
+                    'message' =>
+                    'Assigned tickets fetched successfully.'
+
+                ],
+
+                $response
+
+            ),
+
+            200
+        );
+    }
+
+
+
+    public function internalTicketDetail(
+        int $id
+    ) {
+        $ticket =
+            $this->reportService
+            ->getInternalTicketDetail(
+                $id
+            );
+
+        return response()->json([
+
+            'status' => true,
+
+            'message' =>
+            'Ticket fetched successfully.',
+
+            'ticket' =>
+            $ticket
+
+        ], 200);
+    }
+
+
+
+
+    public function internalTeamReportedTickets(
+        Request $request
+    ) {
+        $response =
+            $this->reportService
+            ->getInternalTeamReportedTickets([
+
+                'search' =>
+                $request->search,
+
+                'status' =>
+                $request->status,
+
+                'per_page' =>
+                $request->per_page
+            ]);
+
+        return response()->json([
+
+            'status' => true,
+
+            'message' =>
+            'Reported tickets fetched successfully.',
+
+            'data' =>
+            $response['data'],
+
+            'pagination' =>
+            $response['pagination']
+
+        ], 200);
+    }
+
+
+
+
+    public function internalTeamReportedTicketById(
     int $id
 )
 {
-    $this->reportService
-        ->sponsorDelete($id);
+    $ticket =
+        $this->reportService
+            ->getInternalTeamReportedTicketById(
+                $id
+            );
 
     return response()->json([
 
         'status' => true,
 
         'message' =>
-            'Report deleted successfully'
-    ]);
-}
+            'Reported ticket fetched successfully.',
 
-public function delete(
-    int $id
-)
-{
-    $this->reportService
-        ->delete($id);
+        'ticket' =>
+            $ticket
 
-    return response()->json([
-
-        'status' => true,
-
-        'message' =>
-            'Report deleted successfully'
-    ]);
+    ], 200);
 }
 }

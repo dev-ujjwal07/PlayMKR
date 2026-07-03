@@ -35,6 +35,11 @@ return Application::configure(basePath: dirname(__DIR__))
         'admin' =>
             \App\Http\Middleware\AdminMiddleware::class,
 
+      'internal_team' =>
+        \App\Http\Middleware\InternalTeamMiddleware::class,
+
+
+
     ]);
 
 })
@@ -192,6 +197,31 @@ $exceptions->render(
     ) {
         $statusCode = 401;
     }
+
+if (
+    $e->getMessage() === 'Report not found.' ||
+    $e->getMessage() === 'Ticket not found.' ||
+    $e->getMessage() === 'Team not found'
+) {
+
+    $statusCode = 404;
+}
+
+if (
+    $e->getMessage() === 'Unauthorized report'
+) {
+
+    $statusCode = 403;
+}
+
+if (
+    $e->getMessage() === 'Report already resolved'
+) {
+
+    $statusCode = 400;
+}
+
+
             return response()->json([
 
                 'status' => false,

@@ -6,22 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void
+    /**
+     * Run the migrations.
+     */
+public function up()
 {
     Schema::table('tickets', function (Blueprint $table) {
-
-        $table->integer('number_of_tickets')
-              ->after('name');
-
+        $table->string('ticket_id')->nullable()->after('id');
     });
 }
 
-public function down(): void
+public function down()
 {
     Schema::table('tickets', function (Blueprint $table) {
-
-        $table->dropColumn('number_of_tickets');
-
+        $table->dropColumn('ticket_id');
     });
 }
 };

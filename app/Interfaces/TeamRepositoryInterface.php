@@ -60,4 +60,24 @@ public function getTeams(
     array $filters
 );
 
+
+public function getInternalTeamByEmail(
+    string $email
+);
+
+public function updateInternalTeam(
+    int $teamId,
+    array $data
+);
+
+public function updateUserById(
+    int $userId,
+    array $data
+);
+
+
+public function getUserById(
+    int $id
+);
+
 }
