@@ -7,7 +7,7 @@ use App\Models\Ticket;
 use App\Models\Sponsor;
 use App\Interfaces\ReportRepositoryInterface;
 use App\Models\Team;
-
+use App\Models\User;
 
 class ReportRepository
 implements ReportRepositoryInterface
@@ -615,6 +615,9 @@ public function getInternalTeamReportedTicketById(
         )
         ->first();
 }
+
+
+
 
 
 }

@@ -30,6 +30,8 @@ use HasApiTokens;
     'name',
     'full_name',
     'email',
+    'number',
+    'profile',
     'password',
     'role_id'
 ];

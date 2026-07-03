@@ -673,7 +673,7 @@ $report =
 
     return [
 
-        'report_id' =>
+    'report_id' =>
             $report->id,
 
         'ticket_id' =>

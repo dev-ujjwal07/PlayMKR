@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 
 
+
 class SponsorApplicationRepository
 implements SponsorApplicationRepositoryInterface
 {
@@ -209,9 +210,72 @@ public function getSponsors(
     return $query
         ->latest('id')
         ->paginate($perPage);
-
-        
-
-
 }
+
+
+public function getSponsorByEmail(
+    string $email
+)
+{
+    return Sponsor::where(
+        'email',
+        $email
+    )->first();
+}
+public function getUserById(
+    int $id
+)
+{
+    return User::find(
+        $id
+    );
+}
+
+public function updateUserById(
+    int $id,
+    array $data
+)
+{
+    $user =
+        User::find(
+            $id
+        );
+
+    if (!$user) {
+
+        return null;
+    }
+
+    $user->update(
+        $data
+    );
+
+    return $user->fresh();
+}
+
+
+
+public function updateSponsorProfile(
+    int $id,
+    array $data
+)
+{
+    $sponsor =
+        Sponsor::find(
+            $id
+        );
+
+    if (!$sponsor) {
+
+        return null;
+    }
+
+    $sponsor->update(
+        $data
+    );
+
+    return $sponsor->fresh();
+}
+
+
 }

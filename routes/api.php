@@ -240,7 +240,6 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
 
 
 
-
 Route::middleware(
     'auth:api'
 )->group(function () {
@@ -283,9 +282,19 @@ Route::middleware(
         '/sponsor/reports/{id}',
         [ReportController::class, 'sponsorDelete']
     );
+
+
+    Route::post(
+    '/sponsor/profile',
+    [SponsorController::class, 'updateProfile']
+);
+
+Route::get(
+    '/sponsor/profile',
+    [SponsorController::class, 'getProfile']
+);
+
 });
-
-
 
 
 
@@ -346,4 +355,22 @@ Route::middleware([
         '/internal-team/reported-tickets/{id}',
         [ReportController::class, 'internalTeamReportedTicketById']
     );
+
+
+
+
+    Route::post(
+    '/internal-team/profile',
+    [TeamController::class, 'updateInternalTeamProfile']
+);
+
+
+Route::get(
+    '/internal-team/profile',
+    [TeamController::class, 'getInternalTeamProfile']
+);
+
+
+
+
 });

@@ -10,7 +10,9 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SponsorCredentialsMail;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use App\Models\User;
 
 class SponsorService
 {
@@ -271,7 +273,7 @@ public function updateSponsor(
     }
 
     return $this->sponsorRepository
-        ->updateSponsor(
+        ->updateSponsorProfile(
             $data['id'],
             $data
         );
@@ -287,6 +289,308 @@ public function getSponsors(
         ->getSponsors(
             $filters
         );
+}
+
+
+
+
+public function updateProfile(
+    array $data
+)
+{
+    return DB::transaction(
+
+        function () use ($data) {
+
+            $authUser =
+                request()->user();
+
+            $sponsor =
+                $this->sponsorRepository
+                    ->getSponsorByEmail(
+                        $authUser->email
+                    );
+
+            if (!$sponsor) {
+
+                throw new Exception(
+                    'Sponsor not found'
+                );
+            }
+
+            $user =
+                User::find(
+                    $authUser->id
+                );
+
+            if (!$user) {
+
+                throw new Exception(
+                    'User not found'
+                );
+            }
+
+            $profilePath =
+                $user->profile;
+
+            if (
+                isset($data['profile'])
+            ) {
+
+                if (
+                    $profilePath &&
+                    Storage::disk('public')->exists(
+                        $profilePath
+                    )
+                ) {
+
+                    Storage::disk('public')
+                        ->delete(
+                            $profilePath
+                        );
+                }
+
+                $file =
+                    $data['profile'];
+
+                $fileName =
+                    time() .
+                    '_' .
+                    $file->getClientOriginalName();
+
+                $profilePath =
+                    $file->storeAs(
+
+                        'profiles',
+
+                        $fileName,
+
+                        'public'
+                    );
+            }
+
+            $userData = [];
+
+            if (
+                isset($data['name'])
+            ) {
+
+                $userData['name'] =
+                    $data['name'];
+
+                $userData['full_name'] =
+                    $data['name'];
+            }
+
+            if (
+                isset($data['email'])
+            ) {
+
+                $userData['email'] =
+                    $data['email'];
+            }
+
+            if (
+                isset($data['number'])
+            ) {
+
+                $userData['number'] =
+                    $data['number'];
+            }
+
+            if (
+                $profilePath
+            ) {
+
+                $userData['profile'] =
+                    $profilePath;
+            }
+
+            if (!empty($userData)) {
+
+                $this->sponsorRepository
+                    ->updateUserById(
+
+                        $user->id,
+
+                        $userData
+                    );
+            }
+
+            $sponsorData = [];
+
+            if (
+                isset($data['name'])
+            ) {
+
+                $sponsorData['name'] =
+                    $data['name'];
+            }
+
+            if (
+                isset($data['email'])
+            ) {
+
+                $sponsorData['email'] =
+                    $data['email'];
+            }
+
+            if (
+                isset($data['number'])
+            ) {
+
+                $sponsorData['contact_number'] =
+                    $data['number'];
+            }
+
+            if (!empty($sponsorData)) {
+
+                $this->sponsorRepository
+                    ->updateSponsorProfile(
+
+                        $sponsor->id,
+
+                        $sponsorData
+                    );
+            }
+
+                        if (
+                isset($data['current_password']) ||
+                isset($data['new_password']) ||
+                isset($data['confirm_password'])
+            ) {
+
+                if (
+                    !Hash::check(
+                        $data['current_password'],
+                        $user->password
+                    )
+                ) {
+
+                    throw new Exception(
+                        'Current password is incorrect.'
+                    );
+                }
+
+                $password =
+                    Hash::make(
+                        $data['new_password']
+                    );
+
+                /*
+                |--------------------------------------------------------------------------
+                | Update User Password
+                |--------------------------------------------------------------------------
+                */
+
+                $this->sponsorRepository
+                    ->updateUserById(
+
+                        $user->id,
+
+                        [
+
+                            'password' =>
+                                $password
+                        ]
+                    );
+
+                /*
+                |--------------------------------------------------------------------------
+                | Update Sponsor Password
+                |--------------------------------------------------------------------------
+                */
+
+                $this->sponsorRepository
+                    ->updateSponsorProfile(
+
+                        $sponsor->id,
+
+                        [
+
+                            'password' =>
+                                $password
+                        ]
+                    );
+            }
+
+            return [
+
+                'status' => true,
+
+                'message' =>
+                    'Profile updated successfully.'
+            ];
+        }
+    );
+}
+
+
+
+public function getProfile()
+{
+    $authUser =
+        request()->user();
+
+    $sponsor =
+        $this->sponsorRepository
+            ->getSponsorByEmail(
+                $authUser->email
+            );
+
+    if (!$sponsor) {
+
+        throw new Exception(
+            'Sponsor not found'
+        );
+    }
+
+    $user =
+        $this->sponsorRepository
+            ->getUserById(
+                $authUser->id
+            );
+
+    if (!$user) {
+
+        throw new Exception(
+            'User not found'
+        );
+    }
+
+    return [
+
+        'status' => true,
+
+        'message' =>
+            'Profile fetched successfully.',
+
+        'data' => [
+
+            'id' =>
+                $user->id,
+
+            'name' =>
+                $user->name,
+
+            'email' =>
+                $user->email,
+
+            'number' =>
+                $user->number,
+
+            'profile' =>
+                $user->profile
+                    ? asset(
+                        'storage/' .
+                        $user->profile
+                    )
+                    : null,
+
+            'created_at' =>
+                $user->created_at
+        ]
+    ];
 }
 
 }

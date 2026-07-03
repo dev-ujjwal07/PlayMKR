@@ -49,5 +49,23 @@ public function findUserByEmail(
     string $email
 );
 
+public function getSponsorByEmail(
+    string $email
+);
+
+public function getUserById(
+    int $id
+);
+
+public function updateUserById(
+    int $id,
+    array $data
+);
+
+public function updateSponsorProfile(
+    int $id,
+    array $data
+);
+
 
 }

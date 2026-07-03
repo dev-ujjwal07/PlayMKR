@@ -11,7 +11,8 @@ use App\Interfaces\TeamRepositoryInterface;
 use App\Mail\TeamCredentialsMail;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 class TeamService
 {
     protected $teamRepository;
@@ -341,4 +342,286 @@ public function getTeams(
             $teams->total()
     ];
 }
+
+
+
+public function updateInternalTeamProfile(
+    array $data
+)
+{
+    return DB::transaction(
+        function () use ($data) {
+
+            $user =
+                request()->user();
+
+            $team =
+                $this->teamRepository
+                    ->getInternalTeamByEmail(
+                        $user->email
+                    );
+
+            if (!$team) {
+
+                throw new Exception(
+                    'Team not found'
+                );
+            }
+
+            $loggedInUser =
+                User::find(
+                    $user->id
+                );
+
+            if (!$loggedInUser) {
+
+                throw new Exception(
+                    'User not found'
+                );
+            }
+
+            $oldEmail =
+                $loggedInUser->email;
+
+            $profilePath =
+                $loggedInUser->profile;
+
+            if (
+                isset($data['profile'])
+            ) {
+
+                if (
+                    $loggedInUser->profile &&
+                    Storage::disk('public')->exists(
+                        $loggedInUser->profile
+                    )
+                ) {
+
+                    Storage::disk('public')
+                        ->delete(
+                            $loggedInUser->profile
+                        );
+                }
+
+                $file =
+                    $data['profile'];
+
+                $fileName =
+                    time() .
+                    '_' .
+                    $file->getClientOriginalName();
+
+                $profilePath =
+                    $file->storeAs(
+                        'profiles',
+                        $fileName,
+                        'public'
+                    );
+            }
+
+            $userData = [];
+
+            if (
+                isset($data['name'])
+            ) {
+
+                $userData['name'] =
+                    $data['name'];
+
+                $userData['full_name'] =
+                    $data['name'];
+            }
+
+            if (
+                isset($data['email'])
+            ) {
+
+                $userData['email'] =
+                    $data['email'];
+            }
+
+            if (
+                isset($data['number'])
+            ) {
+
+                $userData['number'] =
+                    $data['number'];
+            }
+
+            if (
+                $profilePath
+            ) {
+
+                $userData['profile'] =
+                    $profilePath;
+            }
+
+            if (!empty($userData)) {
+
+                $this->teamRepository
+                    ->updateUserById(
+
+                        $loggedInUser->id,
+
+                        $userData
+                    );
+            }
+
+            $teamData = [];
+
+            if (
+                isset($data['name'])
+            ) {
+
+                $teamData['name'] =
+                    $data['name'];
+            }
+
+            if (
+                isset($data['email'])
+            ) {
+
+                $teamData['email'] =
+                    $data['email'];
+            }
+
+            if (!empty($teamData)) {
+
+                $this->teamRepository
+                    ->updateInternalTeam(
+
+                        $team->id,
+
+                        $teamData
+                    );
+            }
+
+                        if (
+                isset($data['current_password']) ||
+                isset($data['new_password']) ||
+                isset($data['confirm_password'])
+            ) {
+
+                if (
+                    !Hash::check(
+                        $data['current_password'],
+                        $loggedInUser->password
+                    )
+                ) {
+
+                    throw new Exception(
+                        'Current password is incorrect.'
+                    );
+                }
+
+                $password =
+                    Hash::make(
+                        $data['new_password']
+                    );
+
+                $this->teamRepository
+                    ->updateUserById(
+
+                        $loggedInUser->id,
+
+                        [
+                            'password' => $password
+                        ]
+                    );
+
+                $this->teamRepository
+                    ->updateInternalTeam(
+
+                        $team->id,
+
+                        [
+                            'password' => $password
+                        ]
+                    );
+            }
+
+            return [
+
+                'status' => true,
+
+                'message' =>
+                    'Profile updated successfully.'
+            ];
+        }
+    );
+}
+
+
+
+
+public function getInternalTeamProfile()
+{
+    $authUser =
+        request()->user();
+
+    $team =
+        $this->teamRepository
+            ->getInternalTeamByEmail(
+                $authUser->email
+            );
+
+    if (!$team) {
+
+        throw new Exception(
+            'Team not found'
+        );
+    }
+
+    $user =
+        $this->teamRepository
+            ->getUserById(
+                $authUser->id
+            );
+
+    if (!$user) {
+
+        throw new Exception(
+            'User not found'
+        );
+    }
+
+    return [
+
+        'status' => true,
+
+        'message' =>
+            'Profile fetched successfully.',
+
+        'data' => [
+
+            'id' =>
+                $user->id,
+
+            'team_id' =>
+                $team->team_id,
+
+            'name' =>
+                $user->name,
+
+            'email' =>
+                $user->email,
+
+            'number' =>
+                $user->number,
+
+            'profile' =>
+                $user->profile
+                ? asset(
+                    'storage/' .
+                    $user->profile
+                )
+                : null,
+
+            'created_at' =>
+                $user->created_at
+        ]
+    ];
+}
+
+
 }
