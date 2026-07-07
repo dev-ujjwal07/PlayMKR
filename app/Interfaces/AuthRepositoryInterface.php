@@ -17,5 +17,14 @@ interface AuthRepositoryInterface
 
 public function updatePassword(string $email, string $password);
 
+public function getUserById(
+    int $id
+);
+
+public function updateUser(
+    int $userId,
+    array $data
+);
+
 
 }

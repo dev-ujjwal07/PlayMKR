@@ -14,7 +14,7 @@ use App\Http\Controllers\Api\CampaignController;
 use App\Http\Controllers\Api\TeamController;
 use  App\Http\Controllers\Api\TicketController;
 use App\Http\Controllers\Api\ReportController;
-
+use App\Http\Controllers\Api\EventController;
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -236,6 +236,44 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
         '/reports/{id}',
         [ReportController::class, 'delete']
     );
+
+
+
+    Route::post(
+    '/admin/profile',
+    [AuthController::class, 'updateProfile']
+);
+
+
+Route::get(
+    '/admin/profile',
+    [AuthController::class, 'getProfile']
+);
+
+
+Route::post(
+    'create-event',
+    [EventController::class, 'createEvent']
+);
+
+
+Route::post(
+    'update-event/{id}',
+    [EventController::class, 'updateEvent']
+);
+
+
+Route::post(
+    'delete-event/{id}',
+    [EventController::class, 'deleteEvent']
+);
+
+Route::get(
+    'events',
+    [  EventController::class, 'getEvents']
+);
+
+
 });
 
 
@@ -369,6 +407,11 @@ Route::get(
     '/internal-team/profile',
     [TeamController::class, 'getInternalTeamProfile']
 );
+
+
+
+
+
 
 
 

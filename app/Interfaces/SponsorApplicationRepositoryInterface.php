@@ -67,5 +67,6 @@ public function updateSponsorProfile(
     array $data
 );
 
+public function getSponsorStats();
 
 }

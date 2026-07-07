@@ -8,7 +8,8 @@ use App\Models\Sponsor;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-
+use App\Models\Deal;
+use App\Models\Deliverable;
 
 
 class SponsorApplicationRepository
@@ -163,7 +164,11 @@ public function getSponsors(
     array $filters
 )
 {
-    $query = Sponsor::query();
+   $query =
+    Sponsor::query()
+        ->withCount(
+            'deals'
+        );
 
     if (
         !empty($filters['search'])
@@ -275,6 +280,33 @@ public function updateSponsorProfile(
     );
 
     return $sponsor->fresh();
+}
+
+
+
+
+public function getSponsorStats()
+{
+    return [
+
+        'total_sponsor' =>
+
+            Sponsor::count(),
+
+        'active_deals' =>
+
+            Deal::where(
+                'status',
+                'active'
+            )->count(),
+
+        'pending_deliverables' =>
+
+            Deliverable::where(
+                'status',
+                'pending'
+            )->count()
+    ];
 }
 
 

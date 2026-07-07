@@ -71,6 +71,38 @@ public function findResetToken(
 
 
 
+    public function getUserById(
+    int $id
+)
+{
+    return User::find(
+        $id
+    );
+}
+
+public function updateUser(
+    int $userId,
+    array $data
+)
+{
+    $user =
+        User::find(
+            $userId
+        );
+
+    if (!$user) {
+
+        return null;
+    }
+
+    $user->update(
+        $data
+    );
+
+    return $user->fresh();
+}
+
+
 
 
 }

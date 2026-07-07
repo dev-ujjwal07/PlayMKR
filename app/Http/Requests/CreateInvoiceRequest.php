@@ -25,7 +25,6 @@ class CreateInvoiceRequest extends FormRequest
 public function rules(): array
 {
     return [
-
         'deal_id' =>
             'required|exists:deals,id',
 
@@ -38,7 +37,8 @@ public function rules(): array
         'invoice_amount' =>
             'required|numeric|min:0',
 
-     
+     'payment_type' =>
+     'required|in:USD,cash, online',
 
         'tax' =>
             'required|numeric|min:0',

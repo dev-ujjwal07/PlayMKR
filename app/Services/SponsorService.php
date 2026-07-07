@@ -285,10 +285,80 @@ public function getSponsors(
     array $filters
 )
 {
-    return $this->sponsorRepository
-        ->getSponsors(
-            $filters
+    $sponsors =
+        $this->sponsorRepository
+            ->getSponsors(
+                $filters
+            );
+
+    $stats =
+        $this->sponsorRepository
+            ->getSponsorStats();
+
+    $formattedData =
+        collect(
+            $sponsors->items()
+        )->map(
+            function ($sponsor) {
+
+                return [
+
+                    'id' =>
+                        $sponsor->id,
+
+                    'name' =>
+                        $sponsor->name,
+
+                    'email' =>
+                        $sponsor->email,
+
+                    'contact_number' =>
+                        $sponsor->contact_number,
+
+                    'website_url' =>
+                        $sponsor->website_url,
+
+                    'industry' =>
+                        $sponsor->industry,
+
+                    'address' =>
+                        $sponsor->address,
+
+                    'deal_count' =>
+                        $sponsor->deals_count,
+
+                    'created_at' =>
+                        $sponsor->created_at,
+
+                    'updated_at' =>
+                        $sponsor->updated_at,
+
+                    'status' =>
+                        $sponsor->status
+                ];
+            }
         );
+
+    return [
+
+        'stats' =>
+            $stats,
+
+        'data' =>
+            $formattedData,
+
+        'current_page' =>
+            $sponsors->currentPage(),
+
+        'last_page' =>
+            $sponsors->lastPage(),
+
+        'per_page' =>
+            $sponsors->perPage(),
+
+        'total' =>
+            $sponsors->total()
+    ];
 }
 
 

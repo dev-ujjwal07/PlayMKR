@@ -8,7 +8,7 @@ use Illuminate\Auth\AuthenticationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Exceptions\InvoiceNotFoundException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-
+use App\Constants\EventConstants;
 
 use App\Models\Report;
 use App\Models\Ticket;
@@ -129,6 +129,7 @@ $exceptions->render(
 
             'Deal' =>
                 'Deal not found',
+                
 
             default =>
                 'Record not found',
@@ -201,7 +202,8 @@ $exceptions->render(
 if (
     $e->getMessage() === 'Report not found.' ||
     $e->getMessage() === 'Ticket not found.' ||
-    $e->getMessage() === 'Team not found'
+    $e->getMessage() === 'Team not found'||
+    $e->getMessage() === EventConstants::EVENT_NOT_FOUND
 ) {
 
     $statusCode = 404;

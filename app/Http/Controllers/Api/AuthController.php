@@ -11,6 +11,7 @@ use App\Http\Requests\LoginRequest;
 use App\Constants\AuthConstants;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Requests\UpdateAdminProfileRequest;
 
 class AuthController extends Controller
 {
@@ -85,8 +86,32 @@ public function resetPassword(ResetPasswordRequest $request)
     ]);
 }
 
+public function updateProfile(
+    UpdateAdminProfileRequest $request
+)
+{
+    $response =
+        $this->authService
+            ->updateProfile(
+                $request->validated()
+            );
+
+    return response()->json(
+        $response
+    );
+}
 
 
+
+public function getProfile()
+{
+    return response()->json(
+
+        $this->authService
+            ->getProfile()
+
+    );
+}
 
 
 }

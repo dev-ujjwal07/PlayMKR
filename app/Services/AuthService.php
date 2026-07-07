@@ -12,17 +12,18 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ForgotPasswordMail;
 use Illuminate\Support\Facades\DB;
-
-
+use Illuminate\Support\Facades\Storage;
 
 class AuthService
 {
     protected $authRepository;
 
     public function __construct(
-        AuthRepositoryInterface $authRepository
+        AuthRepositoryInterface $authRepository,
+         
     )
     {
+
         $this->authRepository = $authRepository;
     }
 
@@ -144,6 +145,236 @@ if (
     }
 }
 
+
+
+
+public function updateProfile(
+    array $data
+)
+{
+    return DB::transaction(
+
+        function () use ($data) {
+
+            $authUser =
+                request()->user();
+
+            $user =
+                $this->authRepository
+                    ->getUserById(
+                        $authUser->id
+                    );
+
+            if (!$user) {
+
+                throw new Exception(
+                    'User not found'
+                );
+            }
+
+            $profilePath =
+                $user->profile;
+
+            /*
+            |--------------------------------------------------------------------------
+            | Profile Image
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                isset($data['profile'])
+            ) {
+
+                if (
+                    $profilePath &&
+                    Storage::disk('public')->exists(
+                        $profilePath
+                    )
+                ) {
+
+                    Storage::disk('public')
+                        ->delete(
+                            $profilePath
+                        );
+                }
+
+                $file =
+                    $data['profile'];
+
+                $fileName =
+                    time() .
+                    '_' .
+                    $file->getClientOriginalName();
+
+                $profilePath =
+                    $file->storeAs(
+
+                        'profiles',
+
+                        $fileName,
+
+                        'public'
+                    );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Update Data
+            |--------------------------------------------------------------------------
+            */
+
+            $updateData = [];
+
+            if (
+                isset($data['name'])
+            ) {
+
+                $updateData['name'] =
+                    $data['name'];
+
+                $updateData['full_name'] =
+                    $data['name'];
+            }
+
+            if (
+                isset($data['email'])
+            ) {
+
+                $updateData['email'] =
+                    $data['email'];
+            }
+
+            if (
+                isset($data['number'])
+            ) {
+
+                $updateData['number'] =
+                    $data['number'];
+            }
+
+            if (
+                $profilePath
+            ) {
+
+                $updateData['profile'] =
+                    $profilePath;
+            }
+
+            if (
+                !empty($updateData)
+            ) {
+
+                $this->authRepository
+                    ->updateUser(
+
+                        $user->id,
+
+                        $updateData
+                    );
+            }
+                        /*
+            |--------------------------------------------------------------------------
+            | Password Update
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                isset($data['current_password']) ||
+                isset($data['new_password']) ||
+                isset($data['confirm_password'])
+            ) {
+
+                if (
+                    !Hash::check(
+                        $data['current_password'],
+                        $user->password
+                    )
+                ) {
+
+                    throw new Exception(
+                        'Current password is incorrect.'
+                    );
+                }
+
+                $this->authRepository
+                    ->updateUser(
+
+                        $user->id,
+
+                        [
+
+                            'password' =>
+                                Hash::make(
+                                    $data['new_password']
+                                )
+                        ]
+                    );
+            }
+
+            return [
+
+                'status' => true,
+
+                'message' =>
+                    'Profile updated successfully.'
+            ];
+        }
+    );
+}
+
+
+public function getProfile()
+{
+    $authUser =
+        request()->user();
+
+    $user =
+        $this->authRepository
+            ->getUserById(
+                $authUser->id
+            );
+
+    if (!$user) {
+
+        throw new Exception(
+            'User not found'
+        );
+    }
+
+    return [
+
+        'status' => true,
+
+        'message' =>
+            'Profile fetched successfully.',
+
+        'data' => [
+
+            'id' =>
+                $user->id,
+
+            'name' =>
+                $user->name,
+
+            'email' =>
+                $user->email,
+
+            'number' =>
+                $user->number,
+
+            'profile' =>
+                $user->profile
+                    ? asset(
+                        'storage/' .
+                        $user->profile
+                    )
+                    : null,
+
+            'created_at' =>
+                $user->created_at
+        ]
+    ];
+}
 
 
 }

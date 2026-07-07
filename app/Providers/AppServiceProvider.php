@@ -34,6 +34,9 @@ use App\Interfaces\TicketRepositoryInterface;
 use App\Interfaces\ReportRepositoryInterface;
 use App\Repositories\ReportRepository;
 
+use App\Repositories\EventRepository;
+use App\Interfaces\EventRepositoryInterface;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -115,6 +118,13 @@ $this->app->bind(
     ReportRepository::class
 );
 
+
+$this->app->bind(
+
+    EventRepositoryInterface::class,
+
+    EventRepository::class
+);
 
 
     }
