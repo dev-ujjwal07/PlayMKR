@@ -3,9 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Deal;
 
 class Sponsor extends Model
 {
+public function deals()
+{
+    return $this->hasMany(
+        Deal::class
+    );
+}
+
+
+
 public function reports()
 {
     return $this->hasMany(

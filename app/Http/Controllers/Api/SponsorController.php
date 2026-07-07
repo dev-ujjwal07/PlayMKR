@@ -159,20 +159,23 @@ public function index(
         'message' =>
             'Sponsors fetched successfully',
 
-        'data' =>
-            $sponsors->items(),
+      'stats' =>
+    $sponsors['stats'],
 
-        'current_page' =>
-            $sponsors->currentPage(),
+'data' =>
+    $sponsors['data'],
 
-        'last_page' =>
-            $sponsors->lastPage(),
+'current_page' =>
+    $sponsors['current_page'],
 
-        'per_page' =>
-            $sponsors->perPage(),
+'last_page' =>
+    $sponsors['last_page'],
 
-        'total' =>
-            $sponsors->total()
+'per_page' =>
+    $sponsors['per_page'],
+
+'total' =>
+    $sponsors['total']
 
     ], 200);
 }
