@@ -87,7 +87,7 @@ public function destroy(
         'message' =>
             InvoiceConstants::INVOICE_DELETED
 
-    ], 200);
+    ], 200);  
 }
 
 
@@ -115,6 +115,9 @@ public function index(
 
         'message' =>
             'Invoices fetched successfully',
+
+        'stats' =>
+          $invoices['stats'],
 
         'data' =>
             $invoices['data'],

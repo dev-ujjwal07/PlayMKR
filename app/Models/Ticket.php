@@ -18,6 +18,7 @@ class Ticket extends Model
         'number_of_tickets',
         'internal_team_description',
         'name',
+        'ticket_status',
         'priority',
         'start_date',
         'attachment',

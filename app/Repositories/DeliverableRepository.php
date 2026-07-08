@@ -7,6 +7,7 @@ use App\Interfaces\DeliverableRepositoryInterface;
 use App\Models\Sponsor;
 use App\Models\Team;
 
+
 class DeliverableRepository
 implements DeliverableRepositoryInterface
 {
@@ -186,6 +187,39 @@ public function getSponsorDeliverables(
     return $query
         ->latest('id')
         ->paginate($perPage);
+}
+
+
+
+public function getDeliverableStats()
+{
+    return [
+
+        'total_deliverables' =>
+
+            Deliverable::count(),
+
+        'pending' =>
+
+            Deliverable::where(
+                'status',
+                'pending'
+            )->count(),
+
+        'inprocess' =>
+
+            Deliverable::where(
+                'status',
+                'in_progress'
+            )->count(),
+
+        'completed' =>
+
+            Deliverable::where(
+                'status',
+                'completed'
+            )->count()
+    ];
 }
 
 }

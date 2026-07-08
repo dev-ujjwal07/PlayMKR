@@ -104,6 +104,44 @@ public function getInvoices(
         );
 }
 
+
+
+public function getInvoiceStats()
+{
+    return [
+
+        'total_invoice' =>
+
+            Invoice::count(),
+
+        'paid' =>
+
+            Invoice::where(
+                'payment_status',
+                'paid'
+            )->count(),
+
+        'pending' =>
+
+            Invoice::where(
+                'payment_status',
+                'pending'
+            )->count(),
+
+        'overdue' =>
+
+            Invoice::where(
+                'payment_status',
+                'overdue'
+            )->count()
+    ];
+}
+
+
+
+
+
+
 public function findInvoiceById(
     int $id
 )

@@ -197,10 +197,26 @@ public function getDeliverables(
     array $filters
 )
 {
-    return $this->deliverableRepository
-        ->getDeliverables(
-            $filters
-        );
+    $deliverables =
+        $this->deliverableRepository
+            ->getDeliverables(
+                $filters
+            );
+
+    $stats =
+        $this->deliverableRepository
+            ->getDeliverableStats();
+
+    return [
+
+        'stats' =>
+
+            $stats,
+
+        'deliverables' =>
+
+            $deliverables
+    ];
 }
 
 
