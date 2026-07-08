@@ -34,4 +34,6 @@ public function getSponsorDeliverables(
     int $sponsorId,
     array $filters
 );
+
+public function getDeliverableStats();
 }

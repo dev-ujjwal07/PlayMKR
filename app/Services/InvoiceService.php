@@ -164,24 +164,38 @@ public function getInvoices(
                 ];
             }
         );
+$stats =
+    $this->invoiceRepository
+        ->getInvoiceStats();
 
-    return [
 
-        'data' =>
-            $formattedData,
 
-        'current_page' =>
-            $invoices->currentPage(),
+return [
 
-        'last_page' =>
-            $invoices->lastPage(),
+    'stats' =>
 
-        'per_page' =>
-            $invoices->perPage(),
+        $stats,
 
-        'total' =>
-            $invoices->total()
-    ];
+    'data' =>
+
+        $formattedData,
+
+    'current_page' =>
+
+        $invoices->currentPage(),
+
+    'last_page' =>
+
+        $invoices->lastPage(),
+
+    'per_page' =>
+
+        $invoices->perPage(),
+
+    'total' =>
+
+        $invoices->total()
+];
 }
 
 

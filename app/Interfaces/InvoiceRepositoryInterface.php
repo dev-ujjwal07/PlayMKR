@@ -32,4 +32,6 @@ public function findInvoiceById(
     int $id
 );
 
+
+public function getInvoiceStats();
 }

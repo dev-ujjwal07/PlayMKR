@@ -128,9 +128,10 @@ public function index(
             ]);
 
     $formattedData =
-        collect(
-            $deliverables->items()
-        )->map(
+       collect(
+    $deliverables['deliverables']
+        ->items()
+)->map(
             function ($deliverable) {
 
                 return [
@@ -184,20 +185,28 @@ public function index(
         'message' =>
             'Deliverables fetched successfully',
 
+
+            'stats' =>
+            $deliverables['stats'],
+
         'data' =>
             $formattedData,
 
-        'current_page' =>
-            $deliverables->currentPage(),
+'current_page' =>
+    $deliverables['deliverables']
+        ->currentPage(),
 
-        'last_page' =>
-            $deliverables->lastPage(),
+'last_page' =>
+    $deliverables['deliverables']
+        ->lastPage(),
 
-        'per_page' =>
-            $deliverables->perPage(),
+'per_page' =>
+    $deliverables['deliverables']
+        ->perPage(),
 
-        'total' =>
-            $deliverables->total()
+'total' =>
+    $deliverables['deliverables']
+        ->total()
 
     ]);
 }
