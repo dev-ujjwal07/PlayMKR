@@ -270,6 +270,11 @@ public function getTickets(
                     ?? 10
             );
 
+$stats =
+    $this->ticketRepository
+        ->getTicketStats();
+             
+
     $tickets->getCollection()
         ->transform(function ($ticket) {
 
@@ -305,6 +310,9 @@ public function getTickets(
                 'name' =>
                     $ticket->name,
 
+                    'ticket_status' =>
+                    $ticket->ticket_status,
+
                 'priority' =>
                     $ticket->priority,
 
@@ -320,6 +328,10 @@ public function getTickets(
         });
 
     return [
+
+        'stats' =>
+
+        $stats,
 
         'data' =>
             $tickets->items(),

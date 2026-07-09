@@ -70,4 +70,8 @@ public function getInternalTeamTicketById(
     int $ticketId,
     int $teamId
 );
+
+
+
+public function getTicketStats();
 }

@@ -126,6 +126,38 @@ public function getTickets(
         ->paginate($perPage);
 }
 
+
+public function getTicketStats()
+{
+    return [
+
+        'total_tickets' =>
+
+            Ticket::count(),
+
+        'assigned_tickets' =>
+
+            Ticket::where(
+                'ticket_status',
+                'Assigned'
+            )->count(),
+
+        'pending_tickets' =>
+
+            Ticket::where(
+                'ticket_status',
+                'Pending'
+            )->count(),
+
+        'used_tickets' =>
+
+            Ticket::where(
+                'ticket_status',
+                'Used'
+            )->count()
+    ];
+}
+              
 public function getTicketById(
     int $id
 )

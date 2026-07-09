@@ -38,6 +38,11 @@ extends FormRequest
             'name' =>
                 'sometimes|string|max:255',
 
+                'ticket_status' =>
+                'sometimes|in:assigned,used,pending',
+
+
+
             'priority' =>
                 'sometimes|in:high,medium,low',
 

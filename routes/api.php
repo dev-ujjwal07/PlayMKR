@@ -274,6 +274,22 @@ Route::get(
 );
 
 
+Route::get(
+     'revenue-chart/month',
+    [InvoiceController::class, 'revenueChart']
+);
+
+Route::get(
+    'revenue-chart/week',
+    [InvoiceController::class, 'weeklyRevenueChart']
+);
+
+Route::get(
+    'revenue-chart/year',
+    [InvoiceController::class, 'yearlyRevenueChart']
+);
+
+
 });
 
 

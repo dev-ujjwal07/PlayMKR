@@ -19,6 +19,7 @@ class TicketController extends Controller
         TicketService $ticketService
     )
     {
+
         $this->ticketService =
             $ticketService;
     }
@@ -116,6 +117,10 @@ public function index(
 
         'message' =>
             'Tickets fetched successfully',
+
+        'stats' =>
+
+          $result['stats'],
 
         'data' =>
             $result['data'],
