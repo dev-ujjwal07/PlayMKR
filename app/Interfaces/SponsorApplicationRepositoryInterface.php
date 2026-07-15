@@ -69,4 +69,6 @@ public function updateSponsorProfile(
 
 public function getSponsorStats();
 
+public function getAdmin();
+
 }

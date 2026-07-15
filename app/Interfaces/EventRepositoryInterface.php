@@ -24,4 +24,12 @@ public function delete(
 public function getEvents(
     array $filters
 );
+
+public function getUpcomingEventsCount();
+
+
+public function getSponsorUpcomingEvents();
+
+public function getSponsorEventStats();
+
 }

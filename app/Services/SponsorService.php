@@ -5,7 +5,6 @@ namespace App\Services;
 use Exception;
 use App\Interfaces\SponsorApplicationRepositoryInterface;
 use App\Exceptions\SponsorAlreadyApprovedException;
-
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -13,16 +12,20 @@ use App\Mail\SponsorCredentialsMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use App\Services\NotificationService;
 
 class SponsorService
 {
     protected $sponsorRepository;
+    protected $notificationService;
 
     public function __construct(
-        SponsorApplicationRepositoryInterface $sponsorRepository
+        SponsorApplicationRepositoryInterface $sponsorRepository,
+          NotificationService $notificationService
     )
     {
         $this->sponsorRepository = $sponsorRepository;
+         $this->notificationService =$notificationService;
     }
 
     public function approveSponsor(array $data)
@@ -217,6 +220,29 @@ if (!$user) {
         ]);
 }
 
+
+$admin =
+    $this->sponsorRepository
+        ->getAdmin();
+
+if ($admin) {
+
+    $this->notificationService
+        ->send(
+
+            $admin,
+
+            'New Sponsor',
+
+            $sponsor->name .
+            ' has been registered.',
+
+            'sponsor',
+
+            $sponsor->id
+
+        );
+}
 
 
 

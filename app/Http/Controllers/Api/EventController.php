@@ -81,4 +81,14 @@ public function getEvents(
     );
 }
 
+public function sponsorUpcomingEvents()
+{
+    return response()->json(
+
+        $this->eventService
+            ->getSponsorUpcomingEvents()
+
+    );
+}
+
 }

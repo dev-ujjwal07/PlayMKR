@@ -159,4 +159,63 @@ public function show(
             $invoice
     ]);
 }
+
+public function revenueChart()
+{
+    return response()->json([
+
+        'success' => true,
+
+        'statusCode' => 200,
+
+        'message' =>
+            'Revenue chart fetched successfully.',
+
+        'data' =>
+            $this->invoiceService
+                ->getRevenueChart()
+
+    ], 200);
+}
+
+
+
+public function weeklyRevenueChart()
+{
+    return response()->json([
+
+        'success' => true,
+
+        'statusCode' => 200,
+
+        'message' =>
+            'Weekly revenue chart fetched successfully.',
+
+        'data' =>
+            $this->invoiceService
+                ->getWeeklyRevenueChart()
+
+    ]);
+}
+
+
+public function yearlyRevenueChart()
+{
+    return response()->json([
+
+        'success' => true,
+
+        'statusCode' => 200,
+
+        'message' =>
+            'Yearly revenue chart fetched successfully.',
+
+        'data' =>
+            $this->invoiceService
+                ->getYearlyRevenueChart()
+
+    ]);
+}
+
+
 }

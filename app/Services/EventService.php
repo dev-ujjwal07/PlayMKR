@@ -321,7 +321,95 @@ public function getEvents(
 
 
 
+public function getSponsorUpcomingEvents(){
 
+$events =
+    $this->eventRepository
+        ->getSponsorUpcomingEvents();
+
+$stats =
+    $this->eventRepository
+        ->getSponsorEventStats();
+
+        $data =
+    collect(
+        $events->items()
+    )->map(function ($event) {
+
+        return [
+
+            'id' =>
+                $event->id,
+
+            'event_name' =>
+                $event->event_name,
+
+            'start_date' =>
+                $event->start_date,
+
+            'end_date' =>
+                $event->end_date,
+
+            'start_time' =>
+                $event->start_time,
+
+            'end_time' =>
+                $event->end_time,
+
+            'event_description' =>
+                $event->event_description,
+
+            'event_image' =>
+                $event->event_image
+                    ? asset(
+                        'storage/'.$event->event_image
+                    )
+                    : null
+        ];
+    });
+
+    return [
+
+    'status' => true,
+
+    'message' =>
+        'Upcoming events fetched successfully',
+
+    'stats' => [
+
+        'total_events' =>
+            (int) $stats->total_events,
+
+        'upcoming_events' =>
+            (int) $stats->upcoming_events,
+
+        'past_events' =>
+            (int) $stats->past_events,
+
+        'today_events' =>
+            (int) $stats->today_events,
+    ],
+
+    'data' =>
+        $data,
+
+    'pagination' => [
+
+        'current_page' =>
+            $events->currentPage(),
+
+        'last_page' =>
+            $events->lastPage(),
+
+        'per_page' =>
+            $events->perPage(),
+
+        'total' =>
+            $events->total()
+    ]
+];
+
+}
 
 
 

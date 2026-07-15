@@ -34,4 +34,12 @@ public function findInvoiceById(
 
 
 public function getInvoiceStats();
+
+public function getRevenueChart();
+
+
+public function getWeeklyRevenueChart();
+
+public function getYearlyRevenueChart();
+
 }

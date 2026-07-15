@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\TeamController;
 use  App\Http\Controllers\Api\TicketController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\NotificationController;
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -274,6 +275,30 @@ Route::get(
 );
 
 
+Route::get(
+     'revenue-chart/month',
+    [InvoiceController::class, 'revenueChart']
+);
+
+Route::get(
+    'revenue-chart/week',
+    [InvoiceController::class, 'weeklyRevenueChart']
+);
+
+Route::get(
+    'revenue-chart/year',
+    [InvoiceController::class, 'yearlyRevenueChart']
+);
+
+
+Route::get(
+    'exposure-chart/month',
+    [DeliverableController::class, 'exposureChart']
+);
+
+ 
+
+
 });
 
 
@@ -294,6 +319,13 @@ Route::middleware(
         '/sponsor/tickets',
         [TicketController::class, 'sponsorTickets']
     );
+
+    Route::get(
+    'sponsor/upcoming-events',
+    [EventController::class, 'sponsorUpcomingEvents']
+);
+
+
 
     Route::patch(
         '/sponsor/tickets/{id}/status',
@@ -331,6 +363,9 @@ Route::get(
     '/sponsor/profile',
     [SponsorController::class, 'getProfile']
 );
+
+
+   
 
 });
 
@@ -416,4 +451,20 @@ Route::get(
 
 
 
+
+});
+
+
+
+Route::middleware('auth:api')->group(function () {
+
+    Route::get('/notifications', [NotificationController::class, 'index']);
+
+    Route::get('/notifications/unread', [NotificationController::class, 'unread']);
+
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
+
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+
+    Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
 });

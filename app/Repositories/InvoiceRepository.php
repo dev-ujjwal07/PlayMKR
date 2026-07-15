@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use App\Models\Invoice;
 use App\Interfaces\InvoiceRepositoryInterface;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class InvoiceRepository
 implements InvoiceRepositoryInterface
@@ -150,5 +152,79 @@ public function findInvoiceById(
         'deal:id,deal_title',
         'sponsor:id,name'
     ])->find($id);
+}
+
+
+public function getRevenueChart()
+{
+    return Invoice::select(
+
+            DB::raw('MONTH(updated_at) as month'),
+
+            DB::raw('SUM(total_amount) as revenue'),
+
+          DB::raw('SUM(invoice_amount) as payments')
+        )
+        ->where(
+            'payment_status',
+            'paid'
+        )
+        ->groupBy(
+            DB::raw('MONTH(updated_at)')
+        )
+        ->get()
+        ->keyBy('month');
+}
+
+
+public function getWeeklyRevenueChart()
+{
+    return Invoice::select(
+
+            DB::raw('DAYOFWEEK(updated_at) as day'),
+
+            DB::raw('SUM(total_amount) as revenue'),
+
+            DB::raw('SUM(invoice_amount) as payments')
+        )
+        ->where(
+            'payment_status',
+            'paid'
+        )
+        ->whereBetween(
+            'updated_at',
+            [
+                Carbon::now()->startOfWeek(),
+                Carbon::now()->endOfWeek()
+            ]
+        )
+        ->groupBy(
+            DB::raw('DAYOFWEEK(updated_at)')
+        )
+        ->get()
+        ->keyBy('day');
+}
+
+
+
+public function getYearlyRevenueChart()
+{
+    return Invoice::select(
+
+            DB::raw('YEAR(updated_at) as year'),
+
+            DB::raw('SUM(total_amount) as revenue'),
+
+            DB::raw('SUM(invoice_amount) as payments')
+        )
+        ->where(
+            'payment_status',
+            'paid'
+        )
+        ->groupBy(
+            DB::raw('YEAR(updated_at)')
+        )
+        ->get()
+        ->keyBy('year');
 }
 }

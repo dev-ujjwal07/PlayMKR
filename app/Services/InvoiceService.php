@@ -40,6 +40,23 @@ class InvoiceService
                 STR_PAD_LEFT
             );
 
+
+
+            $invoiceAmount =
+    (float) $data['invoice_amount'];
+
+$tax =
+    (float) $data['tax'];
+
+$discount =
+    (float) $data['discount'];
+
+$taxAmount =
+    ($invoiceAmount * $tax) / 100;
+
+$data['total_amount'] =
+    ($invoiceAmount + $taxAmount) - $discount;
+
         return $this->invoiceRepository
             ->create($data);
     }
@@ -54,6 +71,9 @@ class InvoiceService
         $this->invoiceRepository
             ->findById($id);
 
+
+            
+
     if (!$invoice) {
 
         throw new Exception(
@@ -62,6 +82,30 @@ class InvoiceService
     }
 
     unset($data['invoice_id']);
+
+    $invoiceAmount =
+    (float) (
+        $data['invoice_amount']
+        ?? $invoice->invoice_amount
+    );
+
+$tax =
+    (float) (
+        $data['tax']
+        ?? $invoice->tax
+    );
+
+$discount =
+    (float) (
+        $data['discount']
+        ?? $invoice->discount
+    );
+
+$taxAmount =
+    ($invoiceAmount * $tax) / 100;
+
+$data['total_amount'] =
+    ($invoiceAmount + $taxAmount) - $discount;
 
     return $this->invoiceRepository
         ->update(
@@ -276,4 +320,143 @@ public function getInvoiceById(
             $invoice->updated_at
     ];
 }
+
+
+public function getRevenueChart()
+{
+    $chart =
+        $this->invoiceRepository
+            ->getRevenueChart();
+
+    $months = [
+
+        1 => 'Jan',
+        2 => 'Feb',
+        3 => 'Mar',
+        4 => 'Apr',
+        5 => 'May',
+        6 => 'Jun',
+        7 => 'Jul',
+        8 => 'Aug',
+        9 => 'Sep',
+        10 => 'Oct',
+        11 => 'Nov',
+        12 => 'Dec'
+    ];
+
+    $data = [];
+
+    foreach ($months as $month => $label) {
+
+        $item =
+            $chart->get($month);
+
+        $data[] = [
+
+            'label' =>
+                $label,
+
+            'revenue' =>
+                $item
+                    ? (float) $item->revenue
+                    : 0,
+
+           'payments' =>
+    $item
+        ? (float) $item->payments
+        : 0
+        ];
+    }
+
+    return $data;
+}
+
+
+
+public function getWeeklyRevenueChart()
+{
+    $chart =
+        $this->invoiceRepository
+            ->getWeeklyRevenueChart();
+
+    $days = [
+
+        1 => 'Sun',
+        2 => 'Mon',
+        3 => 'Tue',
+        4 => 'Wed',
+        5 => 'Thu',
+        6 => 'Fri',
+        7 => 'Sat'
+    ];
+
+    $data = [];
+
+    foreach ($days as $day => $label) {
+
+        $item =
+            $chart->get($day);
+
+        $data[] = [
+
+            'label' => $label,
+
+            'revenue' =>
+                $item
+                    ? (float) $item->revenue
+                    : 0,
+
+            'payments' =>
+                $item
+                    ? (float) $item->payments
+                    : 0
+        ];
+    }
+
+    return $data;
+}
+
+
+
+public function getYearlyRevenueChart()
+{
+    $chart =
+        $this->invoiceRepository
+            ->getYearlyRevenueChart();
+
+    $currentYear =
+        now()->year;
+
+    $data = [];
+
+    for (
+        $year = $currentYear - 4;
+        $year <= $currentYear;
+        $year++
+    ) {
+
+        $item =
+            $chart->get($year);
+
+        $data[] = [
+
+            'label' =>
+                (string) $year,
+
+            'revenue' =>
+                $item
+                    ? (float) $item->revenue
+                    : 0,
+
+            'payments' =>
+                $item
+                    ? (float) $item->payments
+                    : 0
+        ];
+    }
+
+    return $data;
+}
+
+
 }

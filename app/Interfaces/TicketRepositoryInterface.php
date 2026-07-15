@@ -70,4 +70,18 @@ public function getInternalTeamTicketById(
     int $ticketId,
     int $teamId
 );
+
+
+public function findUserByEmail(
+    string $email
+);
+
+
+
+public function getTicketStats();
+
+
+public function getSponsorTicketStats(
+    int $sponsorId
+);
 }

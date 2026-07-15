@@ -8,7 +8,7 @@ use App\Models\Ticket;
 use App\Models\Sponsor;
 use App\Interfaces\TicketRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-
+use App\Models\User; 
 
 class TicketRepository
 implements TicketRepositoryInterface
@@ -48,6 +48,18 @@ implements TicketRepositoryInterface
 {
     return Ticket::find($id);
 }
+
+public function findUserByEmail(
+    string $email
+)
+{
+    return User::where(
+        'email',
+        $email
+    )->first();
+}
+
+
 
 public function update(
     int $id,
@@ -126,6 +138,38 @@ public function getTickets(
         ->paginate($perPage);
 }
 
+
+public function getTicketStats()
+{
+    return [
+
+        'total_tickets' =>
+
+            Ticket::count(),
+
+        'assigned_tickets' =>
+
+            Ticket::where(
+                'ticket_status',
+                'Assigned'
+            )->count(),
+
+        'pending_tickets' =>
+
+            Ticket::where(
+                'ticket_status',
+                'Pending'
+            )->count(),
+
+        'used_tickets' =>
+
+            Ticket::where(
+                'ticket_status',
+                'Used'
+            )->count()
+    ];
+}
+              
 public function getTicketById(
     int $id
 )
@@ -208,6 +252,31 @@ public function getTicketByIdAndSponsor(
         $sponsorId
 
     )->first();
+}
+
+
+
+
+public function getSponsorTicketStats(
+    int $sponsorId
+)
+{
+    return Ticket::where(
+            'sponsor_id',
+            $sponsorId
+        )
+        ->selectRaw("
+            SUM(number_of_tickets) as total_tickets,
+
+            SUM(
+                CASE
+                    WHEN ticket_status = 'Used'
+                    THEN number_of_tickets
+                    ELSE 0
+                END
+            ) as used
+        ")
+        ->first();
 }
 
 
@@ -330,6 +399,9 @@ public function getInternalTeamTicketById(
 
     ->first();
 }
+
+
+
 
 
 
