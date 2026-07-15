@@ -5,21 +5,26 @@ namespace App\Services;
 use Exception;
 use App\Constants\TicketConstants;
 use App\Interfaces\TicketRepositoryInterface;
+use App\Interfaces\EventRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
 use App\Interfaces\SponsorApplicationRepositoryInterface;
+use App\Notifications\CommonNotification;
 
 class TicketService
 {
   protected $ticketRepository;
 protected $sponsorRepository;
+protected $eventRepository;
 
 public function __construct(
     TicketRepositoryInterface $ticketRepository,
-    SponsorApplicationRepositoryInterface $sponsorRepository
+    SponsorApplicationRepositoryInterface $sponsorRepository,
+    EventRepositoryInterface $eventRepository
 )
 {
     $this->ticketRepository = $ticketRepository;
     $this->sponsorRepository = $sponsorRepository;
+    $this->eventRepository =$eventRepository;
 }
 
     public function create(
@@ -106,6 +111,79 @@ $ticket->ticket_id =
     );
 
 $ticket->save();
+
+
+/*
+|--------------------------------------------------------------------------
+| Notify Sponsor
+|--------------------------------------------------------------------------
+*/
+
+$sponsorUser =
+    $this->ticketRepository
+        ->findUserByEmail(
+            $sponsor->email
+        );
+
+if ($sponsorUser) {
+
+    $sponsorUser->notify(
+
+        new CommonNotification(
+
+            'New Ticket Created',
+
+            'A new ticket (' .
+            $ticket->ticket_id .
+            ') has been created for you.',
+
+            'ticket_created',
+
+            $ticket->id,
+
+            '/sponsor/tickets'
+
+        )
+
+    );
+}
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Notify Assigned Team
+|--------------------------------------------------------------------------
+*/
+
+$teamUser =
+    $this->ticketRepository
+        ->findUserByEmail(
+            $team->email
+        );
+
+if ($teamUser) {
+
+    $teamUser->notify(
+
+        new CommonNotification(
+
+            'New Ticket Assigned',
+
+            'Ticket ' .
+            $ticket->ticket_id .
+            ' has been assigned to you.',
+
+            'ticket_assigned',
+
+            $ticket->id,
+
+            '/internal-team/tickets'
+
+        )
+
+    );
+}
 
 return $ticket;
     }
@@ -444,6 +522,31 @@ public function getSponsorTickets(
             $filters
         );
 
+        $ticketStats =
+    $this->ticketRepository
+        ->getSponsorTicketStats(
+            $sponsor->id
+        );
+
+$upcomingEvents =
+    $this->eventRepository
+        ->getUpcomingEventsCount();
+
+$totalTickets =
+    (int) (
+        $ticketStats->total_tickets ?? 0
+    );
+
+$used =
+    (int) (
+        $ticketStats->used ?? 0
+    );
+
+$remaining =
+    $totalTickets - $used;
+
+        
+
     $data = collect(
         $tickets->items()
     )->map(function ($ticket) {
@@ -491,11 +594,20 @@ public function getSponsorTickets(
 
     return [
 
-        'total_tickets' =>
-            $this->ticketRepository
-                ->getSponsorTotalTickets(
-                    $sponsor->id
-                ),
+       'stats' => [
+
+    'total_tickets' =>
+        $totalTickets,
+
+    'used' =>
+        $used,
+
+    'remaining' =>
+        $remaining,
+
+    'upcoming_events' =>
+        $upcomingEvents
+],
 
         'data' =>
             $data,

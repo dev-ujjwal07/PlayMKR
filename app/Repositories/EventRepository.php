@@ -153,4 +153,67 @@ public function getEvents(
         );
 }
 
+public function getUpcomingEventsCount()
+{
+    return Event::whereDate(
+            'start_date',
+            '>=',
+            now()->toDateString()
+        )
+        ->count();
+}
+
+
+public function getSponsorUpcomingEvents()
+{
+    return Event::whereDate(
+            'start_date',
+            '>',
+            now()->toDateString()
+        )
+        ->latest('start_date')
+        ->paginate(100);
+}
+
+
+public function getSponsorEventStats()
+{
+    $today = now()->toDateString();
+
+    return Event::selectRaw("
+        COUNT(*) as total_events,
+
+        SUM(
+            CASE
+                WHEN start_date > ?
+                THEN 1
+                ELSE 0
+            END
+        ) as upcoming_events,
+
+        SUM(
+            CASE
+                WHEN end_date < ?
+                THEN 1
+                ELSE 0
+            END
+        ) as past_events,
+
+        SUM(
+            CASE
+                WHEN start_date <= ?
+                AND end_date >= ?
+                THEN 1
+                ELSE 0
+            END
+        ) as today_events
+    ", [
+
+        $today,
+        $today,
+        $today,
+        $today
+
+    ])->first();
+}
 }

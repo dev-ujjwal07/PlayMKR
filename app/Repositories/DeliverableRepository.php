@@ -6,7 +6,7 @@ use App\Models\Deliverable;
 use App\Interfaces\DeliverableRepositoryInterface;
 use App\Models\Sponsor;
 use App\Models\Team;
-
+use Illuminate\Support\Facades\DB;
 
 class DeliverableRepository
 implements DeliverableRepositoryInterface
@@ -15,8 +15,8 @@ implements DeliverableRepositoryInterface
     public function findSponsorByName(
     string $name
 )
-{
-    return Sponsor::where(
+{ 
+   return Sponsor::where(
         'name',
         $name
     )->first();
@@ -220,6 +220,89 @@ public function getDeliverableStats()
                 'completed'
             )->count()
     ];
+}
+
+
+
+public function getExposureChart()
+{
+    return Deliverable::select(
+
+            DB::raw('MONTH(updated_at) as month'),
+
+            DB::raw("
+                SUM(
+                    CASE
+                        WHEN status = 'pending'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) as pending
+            "),
+
+            DB::raw("
+                SUM(
+                    CASE
+                        WHEN status = 'completed'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) as completed
+            ")
+        )
+        ->whereYear(
+            'updated_at',
+            now()->year
+        )
+        ->groupBy(
+            DB::raw('MONTH(updated_at)')
+        )
+        ->get()
+        ->keyBy('month');
+}
+
+
+
+
+
+
+
+public function getSponsorDeliverableStats(
+    int $sponsorId
+)
+{
+    return Deliverable::where(
+            'sponsor_id',
+            $sponsorId
+        )
+        ->selectRaw('
+            COUNT(*) as total_deliverables,
+
+            SUM(
+                CASE
+                    WHEN status = "pending"
+                    THEN 1
+                    ELSE 0
+                END
+            ) as pending,
+
+            SUM(
+                CASE
+                    WHEN status = "in_progress"
+                    THEN 1
+                    ELSE 0
+                END
+            ) as in_progress,
+
+            SUM(
+                CASE
+                    WHEN status = "completed"
+                    THEN 1
+                    ELSE 0
+                END
+            ) as completed
+        ')
+        ->first();
 }
 
 }

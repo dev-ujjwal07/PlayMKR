@@ -72,6 +72,16 @@ public function getInternalTeamTicketById(
 );
 
 
+public function findUserByEmail(
+    string $email
+);
+
+
 
 public function getTicketStats();
+
+
+public function getSponsorTicketStats(
+    int $sponsorId
+);
 }

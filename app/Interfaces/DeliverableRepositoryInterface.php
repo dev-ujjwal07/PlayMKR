@@ -36,4 +36,11 @@ public function getSponsorDeliverables(
 );
 
 public function getDeliverableStats();
+
+public function getExposureChart();
+
+public function getSponsorDeliverableStats(
+    int $sponsorId
+);
+
 }

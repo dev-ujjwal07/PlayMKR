@@ -109,6 +109,8 @@ public function createDirectSponsor(array $data)
     return Sponsor::create($data);
 }
 
+
+
 public function deleteSponsor(int $id)
 {
     return Sponsor::where('id', $id)->delete();
@@ -307,6 +309,15 @@ public function getSponsorStats()
                 'pending'
             )->count()
     ];
+}
+
+
+public function getAdmin()
+{
+    return User::where(
+        'role_id',
+        1
+    )->first();
 }
 
 

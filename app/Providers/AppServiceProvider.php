@@ -37,6 +37,9 @@ use App\Repositories\ReportRepository;
 use App\Repositories\EventRepository;
 use App\Interfaces\EventRepositoryInterface;
 
+use App\Interfaces\NotificationRepositoryInterface;
+use App\Repositories\NotificationRepository;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -126,6 +129,13 @@ $this->app->bind(
     EventRepository::class
 );
 
+$this->app->bind(
+
+    NotificationRepositoryInterface::class,
+
+    NotificationRepository::class
+
+);
 
     }
 

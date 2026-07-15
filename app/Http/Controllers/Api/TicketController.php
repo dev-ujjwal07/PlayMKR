@@ -168,8 +168,8 @@ public function sponsorTickets(
         'message' =>
             'Sponsor tickets fetched successfully',
 
-        'total_tickets' =>
-            $result['total_tickets'],
+        'stats' =>
+            $result['stats'],
 
         'data' =>
             $result['data'],

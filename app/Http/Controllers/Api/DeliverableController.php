@@ -237,6 +237,10 @@ public function sponsorDeliverables(
         'message' =>
             'Deliverables fetched successfully',
 
+            
+            'stats' =>
+        $result['stats'],
+
         'data' =>
             $result['data'],
 
@@ -244,4 +248,23 @@ public function sponsorDeliverables(
             $result['pagination']
     ]);
 }
+
+
+public function exposureChart()
+{
+    return response()->json([
+
+        'success' => true,
+
+        'statusCode' => 200,
+
+        'message' =>
+            'Exposure chart fetched successfully.',
+
+        'data' =>
+            $this->deliverableService
+                ->getExposureChart()
+    ]);
+}
+
 }

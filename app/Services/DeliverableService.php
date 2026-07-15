@@ -250,10 +250,20 @@ public function getSponsorDeliverables(
             $filters
         );
 
+        $stats =
+    $this->deliverableRepository
+        ->getSponsorDeliverableStats(
+            $sponsor->id
+        );
+
+
     $data =
         collect(
             $deliverables->items()
         )->map(
+
+
+        
 
             function ($item) {
 
@@ -277,7 +287,46 @@ public function getSponsorDeliverables(
             }
         );
 
+        $campaignProgress = 0;
+
+if (
+    $stats &&
+    $stats->total_deliverables > 0
+) {
+
+ $campaignProgress = ceil(
+
+    (
+        $stats->completed
+        /
+        $stats->total_deliverables
+    ) * 100
+);
+}
+
+
+
+
     return [
+
+
+    'stats' => [
+
+        'total_deliverables' =>
+            (int) ($stats->total_deliverables ?? 0),
+
+        'pending' =>
+            (int) ($stats->pending ?? 0),
+
+        'in_progress' =>
+            (int) ($stats->in_progress ?? 0),
+
+        'completed' =>
+            (int) ($stats->completed ?? 0),
+
+        'campaign_progress' =>
+            $campaignProgress
+    ],
 
         'data' =>
             $data,
@@ -299,4 +348,57 @@ public function getSponsorDeliverables(
     ];
 }
 
+
+
+
+public function getExposureChart()
+{
+    $chart =
+        $this->deliverableRepository
+            ->getExposureChart();
+
+    $months = [
+
+        1  => 'Jan',
+        2  => 'Feb',
+        3  => 'Mar',
+        4  => 'Apr',
+        5  => 'May',
+        6  => 'Jun',
+        7  => 'Jul',
+        8  => 'Aug',
+        9  => 'Sep',
+        10 => 'Oct',
+        11 => 'Nov',
+        12 => 'Dec'
+    ];
+
+    $data = [];
+
+    foreach ($months as $month => $label) {
+
+        $item =
+            $chart->get($month);
+
+        $data[] = [
+
+            'label' => $label,
+
+            'pending' =>
+                $item
+                    ? (int) $item->pending
+                    : 0,
+
+            'completed' =>
+                $item
+                    ? (int) $item->completed
+                    : 0
+        ];
+    }
+
+    return $data;
 }
+
+}
+
+
